@@ -8,27 +8,29 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-[#0a0a0f]/80 backdrop-blur-lg">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200/60 dark:border-white/[0.06] bg-white/70 dark:bg-surface-900/70 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto flex items-center justify-between h-16 px-6">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-          <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="40" height="40" rx="8" fill="#0d9488"/>
-            <path d="M10 12h20v3H10zM12 18h16v2H12zM14 23h12v2H14zM16 28h8v2H16z" fill="white" opacity="0.95"/>
-          </svg>
-          Squeezr
+        <Link href="/" className="flex items-center gap-2.5 font-bold text-lg">
+          <div className="w-7 h-7 rounded-lg bg-brand-600 flex items-center justify-center">
+            <svg width="16" height="16" viewBox="0 0 40 40" fill="none">
+              <path d="M6 10h28v4H6zM9 18h22v3H9zM12 25h16v3H12zM16 32h8v2H16z" fill="white" opacity="0.95"/>
+            </svg>
+          </div>
+          <span className="text-slate-900 dark:text-white">Squeezr</span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-6">
-          <Link href="/docs" className="text-sm text-gray-600 dark:text-gray-400 hover:text-teal-500 transition-colors">Docs</Link>
-          <a href="https://github.com/sergioramosv/Squeezr" target="_blank" rel="noopener" className="text-sm text-gray-600 dark:text-gray-400 hover:text-teal-500 transition-colors">GitHub</a>
-          <a href="https://www.npmjs.com/package/squeezr-ai" target="_blank" rel="noopener" className="text-sm text-gray-600 dark:text-gray-400 hover:text-teal-500 transition-colors">npm</a>
-          <ThemeToggle />
+        <div className="hidden md:flex items-center gap-1">
+          <Link href="/docs" className="px-3 py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 rounded-lg hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors">Docs</Link>
+          <a href="https://github.com/sergioramosv/Squeezr" target="_blank" rel="noopener" className="px-3 py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 rounded-lg hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors">GitHub</a>
+          <a href="https://www.npmjs.com/package/squeezr-ai" target="_blank" rel="noopener" className="px-3 py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 rounded-lg hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors">npm</a>
+          <div className="ml-2 pl-2 border-l border-slate-200 dark:border-white/[0.06]">
+            <ThemeToggle />
+          </div>
         </div>
 
-        {/* Mobile */}
         <div className="flex items-center gap-2 md:hidden">
           <ThemeToggle />
-          <button onClick={() => setOpen(!open)} className="p-2 text-gray-500">
+          <button onClick={() => setOpen(!open)} className="p-2 text-slate-500 rounded-lg hover:bg-slate-100 dark:hover:bg-white/[0.04]">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {open
                 ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -39,10 +41,10 @@ export function Navbar() {
         </div>
       </div>
       {open && (
-        <div className="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0a0a0f] px-6 py-4 flex flex-col gap-3">
-          <Link href="/docs" onClick={() => setOpen(false)} className="text-sm text-gray-600 dark:text-gray-400">Docs</Link>
-          <a href="https://github.com/sergioramosv/Squeezr" className="text-sm text-gray-600 dark:text-gray-400">GitHub</a>
-          <a href="https://www.npmjs.com/package/squeezr-ai" className="text-sm text-gray-600 dark:text-gray-400">npm</a>
+        <div className="md:hidden border-t border-slate-200/60 dark:border-white/[0.06] bg-white dark:bg-surface-900 px-6 py-4 flex flex-col gap-2">
+          <Link href="/docs" onClick={() => setOpen(false)} className="py-2 text-sm text-slate-600 dark:text-slate-400">Docs</Link>
+          <a href="https://github.com/sergioramosv/Squeezr" className="py-2 text-sm text-slate-600 dark:text-slate-400">GitHub</a>
+          <a href="https://www.npmjs.com/package/squeezr-ai" className="py-2 text-sm text-slate-600 dark:text-slate-400">npm</a>
         </div>
       )}
     </nav>
