@@ -12,16 +12,16 @@ export function Navbar() {
       <div className="max-w-6xl mx-auto flex items-center justify-between h-16 px-6">
         <Link href="/" className="flex items-center gap-2 font-bold text-lg">
           <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="40" height="40" rx="8" fill="#7c3aed"/>
+            <rect width="40" height="40" rx="8" fill="#0d9488"/>
             <path d="M10 12h20v3H10zM12 18h16v2H12zM14 23h12v2H14zM16 28h8v2H16z" fill="white" opacity="0.95"/>
           </svg>
           Squeezr
         </Link>
 
         <div className="hidden md:flex items-center gap-6">
-          <Link href="/docs" className="text-sm text-gray-600 dark:text-gray-400 hover:text-accent-500 transition-colors">Docs</Link>
-          <a href="https://github.com/sergioramosv/Squeezr" target="_blank" rel="noopener" className="text-sm text-gray-600 dark:text-gray-400 hover:text-accent-500 transition-colors">GitHub</a>
-          <a href="https://www.npmjs.com/package/squeezr-ai" target="_blank" rel="noopener" className="text-sm text-gray-600 dark:text-gray-400 hover:text-accent-500 transition-colors">npm</a>
+          <Link href="/docs" className="text-sm text-gray-600 dark:text-gray-400 hover:text-teal-500 transition-colors">Docs</Link>
+          <a href="https://github.com/sergioramosv/Squeezr" target="_blank" rel="noopener" className="text-sm text-gray-600 dark:text-gray-400 hover:text-teal-500 transition-colors">GitHub</a>
+          <a href="https://www.npmjs.com/package/squeezr-ai" target="_blank" rel="noopener" className="text-sm text-gray-600 dark:text-gray-400 hover:text-teal-500 transition-colors">npm</a>
           <ThemeToggle />
         </div>
 
