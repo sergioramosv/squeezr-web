@@ -5,95 +5,104 @@
 @layer base {
   html { scroll-behavior: smooth; }
   body {
-    @apply bg-[#09090b] text-slate-200 antialiased;
+    @apply bg-[#0a0a0a] text-neutral-300 antialiased;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 }
 
 /* ── Sections ── */
 .sec-hero {
-  background: linear-gradient(180deg, #09090b 0%, #0c1220 40%, #0d1a2d 70%, #09090b 100%);
+  background: #0a0a0a;
 }
 
 .sec-features {
-  background: #0c0c0f;
+  background: #0f0f0f;
 }
 
 .sec-tools {
-  background: linear-gradient(180deg, #09090b 0%, #0f1623 50%, #09090b 100%);
+  background: #0a0a0a;
 }
 
 .sec-pipeline {
-  background: #0c0c0f;
+  background: #0f0f0f;
 }
 
 .sec-examples {
-  background: #09090b;
+  background: #0a0a0a;
 }
 
 .sec-cta {
-  background: linear-gradient(180deg, #0c0c0f 0%, #111827 50%, #0c0c0f 100%);
+  background: #0f0f0f;
 }
 
 /* Light mode overrides */
-:root:not(.dark) body { @apply bg-white text-slate-800; }
-:root:not(.dark) .sec-hero { background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 40%, #e0e7ff 70%, #f8fafc 100%); }
-:root:not(.dark) .sec-features { background: #f8fafc; }
-:root:not(.dark) .sec-tools { background: linear-gradient(180deg, #fff 0%, #f0f4ff 50%, #fff 100%); }
-:root:not(.dark) .sec-pipeline { background: #f8fafc; }
-:root:not(.dark) .sec-examples { background: #fff; }
-:root:not(.dark) .sec-cta { background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%); }
+:root:not(.dark) body { @apply bg-white text-neutral-800; }
+:root:not(.dark) .sec-hero { background: #fafafa; }
+:root:not(.dark) .sec-features { background: #f5f5f5; }
+:root:not(.dark) .sec-tools { background: #fafafa; }
+:root:not(.dark) .sec-pipeline { background: #f5f5f5; }
+:root:not(.dark) .sec-examples { background: #fafafa; }
+:root:not(.dark) .sec-cta { background: #f5f5f5; }
 
 /* ── Cards ── */
 .card-dark {
-  @apply bg-[#111113] border border-[#1f1f23] rounded-2xl;
+  @apply bg-[#141414] border border-[#262626] rounded-2xl;
   transition: border-color 0.3s, transform 0.2s, box-shadow 0.3s;
 }
 .card-dark:hover {
-  @apply border-blue-500/30;
+  border-color: #404040;
   transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(59,130,246,0.08);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
 }
 
 :root:not(.dark) .card-dark {
-  @apply bg-white border-slate-200 shadow-sm;
+  @apply bg-white border-neutral-200 shadow-sm;
 }
 :root:not(.dark) .card-dark:hover {
-  @apply border-blue-500/40 shadow-lg shadow-blue-500/5;
+  @apply border-neutral-300 shadow-lg;
 }
 
 /* ── Glow orbs ── */
 .orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
+  filter: blur(120px);
   pointer-events: none;
-  opacity: 0.4;
+  opacity: 0.25;
 }
 
 .orb-blue {
-  background: radial-gradient(circle, rgba(59,130,246,0.4), transparent 70%);
+  background: #2563eb;
 }
 
 .orb-indigo {
-  background: radial-gradient(circle, rgba(99,102,241,0.3), transparent 70%);
+  background: #7c3aed;
 }
 
-.orb-emerald {
-  background: radial-gradient(circle, rgba(16,185,129,0.25), transparent 70%);
+.orb-warm {
+  background: #ea580c;
 }
 
 /* ── Terminal ── */
 .terminal {
   @apply rounded-2xl overflow-hidden;
-  background: #0a0a0f;
-  border: 1px solid #1f1f25;
-  box-shadow: 0 25px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+  background: #0c0c0c;
+  border: 1px solid #262626;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+}
+:root:not(.dark) .terminal {
+  background: #1a1a1a;
+  border-color: #333;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.15);
 }
 .terminal-bar {
   @apply flex items-center gap-2 px-4 py-3;
-  background: rgba(255,255,255,0.02);
-  border-bottom: 1px solid #1f1f25;
+  background: #111111;
+  border-bottom: 1px solid #262626;
+}
+:root:not(.dark) .terminal-bar {
+  background: #222;
+  border-bottom-color: #333;
 }
 .terminal-dot { @apply w-2.5 h-2.5 rounded-full; }
 .terminal-body { @apply p-5 font-mono text-[13px] leading-relaxed; }
@@ -101,22 +110,21 @@
 /* ── Number step ── */
 .step-num {
   @apply w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold shrink-0;
-  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  background: #2563eb;
   color: white;
-  box-shadow: 0 4px 20px rgba(59,130,246,0.3);
 }
 
 /* ── Flow cards ── */
 .flow-card {
-  @apply relative p-6 rounded-2xl border border-[#1f1f23] bg-[#0e0e12];
+  @apply relative p-6 rounded-2xl border border-[#262626] bg-[#111111];
   transition: all 0.3s;
 }
 .flow-card:hover {
-  @apply border-blue-500/30;
-  box-shadow: 0 0 30px rgba(59,130,246,0.06);
+  border-color: #404040;
+  box-shadow: 0 0 30px rgba(0,0,0,0.2);
 }
 :root:not(.dark) .flow-card {
-  @apply bg-white border-slate-200 shadow-sm;
+  @apply bg-white border-neutral-200 shadow-sm;
 }
 
 /* ── Shimmer ── */
@@ -126,12 +134,67 @@
 }
 
 .shimmer-border {
-  background: linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(37,99,235,0.2), transparent);
   background-size: 200% 100%;
   animation: shimmer 3s linear infinite;
+}
+
+/* ── Marquee ── */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee 30s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
 }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { @apply bg-transparent; }
-::-webkit-scrollbar-thumb { @apply bg-slate-700 rounded-full; }
+::-webkit-scrollbar-thumb { @apply bg-neutral-700 rounded-full; }
+
+/* ── Range input ── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e5e5e5;
+  outline: none;
+  cursor: pointer;
+}
+.dark input[type="range"] {
+  background: #262626;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2563eb;
+  cursor: pointer;
+  margin-top: -6px;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2563eb;
+  cursor: pointer;
+  border: none;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+}
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+}

@@ -10,112 +10,95 @@ export default function CliCommandsPage() {
 
       <h2>squeezr setup</h2>
       <p>
-        Interactive wizard that detects your installed coding tools and
-        generates the configuration file.
+        One-time setup that configures everything automatically: env vars, shell wrapper,
+        auto-start, and TLS certificates. Run once after installation.
       </p>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
         <code>{`squeezr setup`}</code>
       </pre>
-      <p>This command will:</p>
+      <p>What it does:</p>
       <ul>
-        <li>Detect installed tools (Claude Code, Codex, Aider, Gemini CLI, Ollama).</li>
-        <li>Prompt for API keys (optional &mdash; keys can be set via env vars).</li>
-        <li>Write <code>~/.config/squeezr/config.toml</code>.</li>
-        <li>Print environment variable export lines for your shell profile.</li>
+        <li>Sets <code>ANTHROPIC_BASE_URL</code> and <code>GEMINI_API_BASE_URL</code> in your user environment.</li>
+        <li>Installs a shell wrapper in PowerShell <code>$PROFILE</code> (Windows) or <code>~/.bashrc</code> / <code>~/.zshrc</code> (Linux/macOS/WSL) that auto-refreshes env vars without restarting the terminal.</li>
+        <li>Registers auto-start (Task Scheduler on Windows, systemd on Linux, launchd on macOS).</li>
+        <li>Generates and installs the MITM CA certificate for Codex support.</li>
       </ul>
-      <p>
-        Run <code>squeezr setup</code> again at any time to reconfigure. It
-        will preserve your existing settings and only update what you change.
-      </p>
 
       <h2>squeezr start</h2>
-      <p>
-        Starts the proxy as a background daemon.
-      </p>
+      <p>Starts the proxy as a background daemon.</p>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
-        <code>{`squeezr start
-
-# With custom port
-squeezr start --port 9090
-
-# Foreground mode (for debugging)
-squeezr start --foreground
-
-# With debug logging
-squeezr start --debug`}</code>
+        <code>{`squeezr start`}</code>
       </pre>
       <p>
-        The proxy runs as a detached process. Its PID is stored in{" "}
-        <code>~/.config/squeezr/squeezr.pid</code>.
+        Starts both the HTTP proxy (port 8080) and the MITM proxy (port 8081). If a version
+        mismatch is detected after an update, it restarts automatically with the correct binary.
       </p>
 
       <h2>squeezr stop</h2>
-      <p>
-        Stops the running proxy daemon.
-      </p>
+      <p>Stops the running proxy daemon.</p>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
         <code>{`squeezr stop`}</code>
       </pre>
-      <p>
-        This sends a graceful shutdown signal. In-flight requests are allowed
-        to complete before the process exits. The session cache and expand
-        store are cleared.
-      </p>
 
       <h2>squeezr status</h2>
-      <p>
-        Shows the current state of the proxy.
-      </p>
+      <p>Shows whether the proxy is running, on which ports, and the PID.</p>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
         <code>{`squeezr status`}</code>
       </pre>
-      <p>Example output:</p>
+
+      <h2>squeezr update</h2>
+      <p>
+        Kills the running proxy, installs the latest version from npm, and restarts automatically.
+        Also runs setup to refresh env vars and shell wrappers.
+      </p>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
-        <code>{`Squeezr proxy
-  Status:     running
-  Port:       8080
-  PID:        12345
-  Uptime:     2h 15m
-  Requests:   142
-  Savings:    63.2%
-
-Routes:
-  /anthropic  -> https://api.anthropic.com
-  /openai     -> https://api.openai.com
-  /gemini     -> https://generativelanguage.googleapis.com
-
-Config:
-  Global:   ~/.config/squeezr/config.toml
-  Project:  (none)`}</code>
+        <code>{`squeezr update`}</code>
       </pre>
 
       <h2>squeezr logs</h2>
-      <p>
-        Shows the proxy logs. Useful for debugging connection issues.
-      </p>
+      <p>Shows the last 50 log lines.</p>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
-        <code>{`# Show recent logs
-squeezr logs
-
-# Follow logs in real-time
-squeezr logs --follow
-
-# Show last N lines
-squeezr logs --lines 50`}</code>
+        <code>{`squeezr logs`}</code>
       </pre>
-      <p>
-        Logs are stored in <code>~/.config/squeezr/squeezr.log</code>. In
-        debug mode (<code>--debug</code> or <code>[proxy] debug = true</code>),
-        logs include full request/response details.
-      </p>
 
-      <h2>squeezr --version</h2>
+      <h2>squeezr config</h2>
+      <p>Prints the current resolved configuration.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr config`}</code>
+      </pre>
+
+      <h2>squeezr ports</h2>
+      <p>Interactive prompt to change the HTTP proxy port and MITM proxy port. Updates env vars automatically.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr ports`}</code>
+      </pre>
+
+      <h2>squeezr gain</h2>
+      <p>Estimates token savings for a directory by analysing the files in it.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr gain`}</code>
+      </pre>
+
+      <h2>squeezr discover</h2>
+      <p>Detects which AI CLIs are installed on your system.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr discover`}</code>
+      </pre>
+
+      <h2>squeezr uninstall</h2>
       <p>
-        Prints the installed version.
+        Removes everything Squeezr installed: env vars, CA certificates, auto-start entries,
+        and log files. Run <code>npm uninstall -g squeezr-ai</code> afterwards to remove the
+        package.
       </p>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
-        <code>{`squeezr --version
-# squeezr v1.2.0`}</code>
+        <code>{`squeezr uninstall`}</code>
+      </pre>
+
+      <h2>squeezr version</h2>
+      <p>Prints the installed version.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr version`}</code>
       </pre>
 
       <h2>Command summary</h2>
@@ -129,7 +112,7 @@ squeezr logs --lines 50`}</code>
         <tbody>
           <tr>
             <td><code>squeezr setup</code></td>
-            <td>Interactive configuration wizard</td>
+            <td>Configure env vars, shell wrapper, auto-start, CA trust</td>
           </tr>
           <tr>
             <td><code>squeezr start</code></td>
@@ -141,19 +124,39 @@ squeezr logs --lines 50`}</code>
           </tr>
           <tr>
             <td><code>squeezr status</code></td>
-            <td>Show proxy status and stats</td>
+            <td>Show proxy status</td>
+          </tr>
+          <tr>
+            <td><code>squeezr update</code></td>
+            <td>Update to latest version and restart</td>
           </tr>
           <tr>
             <td><code>squeezr logs</code></td>
-            <td>View proxy logs</td>
+            <td>Show last 50 log lines</td>
           </tr>
           <tr>
-            <td><code>squeezr --version</code></td>
+            <td><code>squeezr config</code></td>
+            <td>Print current configuration</td>
+          </tr>
+          <tr>
+            <td><code>squeezr ports</code></td>
+            <td>Change HTTP and MITM proxy ports</td>
+          </tr>
+          <tr>
+            <td><code>squeezr gain</code></td>
+            <td>Estimate token savings for a directory</td>
+          </tr>
+          <tr>
+            <td><code>squeezr discover</code></td>
+            <td>Detect installed AI CLIs</td>
+          </tr>
+          <tr>
+            <td><code>squeezr uninstall</code></td>
+            <td>Remove Squeezr completely</td>
+          </tr>
+          <tr>
+            <td><code>squeezr version</code></td>
             <td>Print version</td>
-          </tr>
-          <tr>
-            <td><code>squeezr --help</code></td>
-            <td>Show help</td>
           </tr>
         </tbody>
       </table>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { I18nProvider } from "@/lib/i18n";
 import { Navbar } from "@/components/Navbar";
 import "./globals.css";
 
@@ -29,8 +30,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider>
-          <Navbar />
-          <main className="pt-16">{children}</main>
+          <I18nProvider>
+            <Navbar />
+            <main className="pt-16">{children}</main>
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

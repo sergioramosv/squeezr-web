@@ -4,8 +4,7 @@ export default function QuickStartPage() {
   return (
     <DocPage title="Quick Start">
       <p>
-        Get Squeezr running in under two minutes. Three steps, zero config
-        changes to your coding tool.
+        Get Squeezr running in under two minutes. Two commands and you&apos;re done.
       </p>
 
       <h2>Step 1: Install</h2>
@@ -13,85 +12,56 @@ export default function QuickStartPage() {
         <code>{`npm install -g squeezr-ai`}</code>
       </pre>
 
-      <h2>Step 2: Start the proxy</h2>
+      <h2>Step 2: Run setup</h2>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr setup`}</code>
+      </pre>
+      <p>
+        That&apos;s it. <code>squeezr setup</code> handles everything automatically:
+      </p>
+      <ul>
+        <li>Sets <code>ANTHROPIC_BASE_URL</code> and <code>GEMINI_API_BASE_URL</code> to point at the proxy.</li>
+        <li>Installs a shell wrapper in your PowerShell profile (Windows) or <code>~/.bashrc</code> / <code>~/.zshrc</code> (Linux/macOS/WSL) so env vars refresh automatically after each <code>squeezr</code> command &mdash; no need to restart your terminal.</li>
+        <li>Registers auto-start so the proxy comes back up after a reboot (Task Scheduler on Windows, systemd on Linux, launchd on macOS).</li>
+        <li>Imports the MITM CA certificate so Codex trusts the proxy&apos;s TLS (Windows Certificate Store on Windows; <code>~/.squeezr/mitm-ca/bundle.crt</code> on macOS/Linux/WSL).</li>
+      </ul>
+
+      <h2>Step 3: Start the proxy</h2>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
         <code>{`squeezr start`}</code>
       </pre>
-
-      <h2>Step 3: Point your tool at the proxy</h2>
       <p>
-        Add the appropriate environment variable to your shell profile. For
-        example, with Claude Code:
-      </p>
-      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
-        <code>{`# Claude Code
-export ANTHROPIC_BASE_URL=http://localhost:8080/anthropic
-
-# Codex / Aider
-export OPENAI_BASE_URL=http://localhost:8080/openai
-
-# Gemini CLI
-export GEMINI_API_BASE_URL=http://localhost:8080/gemini`}</code>
-      </pre>
-      <p>
-        That&apos;s it. Use your tool exactly as before &mdash; Squeezr compresses
-        transparently.
+        Use your coding tool exactly as before &mdash; Squeezr compresses transparently.
       </p>
 
       <h2>What happens behind the scenes</h2>
       <p>
-        When your coding tool sends a request to the LLM API, Squeezr
-        intercepts and processes it through a multi-layer compression pipeline:
+        Every request passes through a three-layer compression pipeline:
       </p>
       <ol>
         <li>
-          <strong>Request interception</strong> &mdash; The proxy receives the
-          API call from your tool and inspects the message payload.
+          <strong>System prompt compression</strong> &mdash; Claude Code&apos;s ~13KB system prompt is
+          compressed once and cached. Subsequent requests reuse the cached version, saving ~3,000
+          tokens per request.
         </li>
         <li>
-          <strong>Pattern matching</strong> &mdash; Tool results (file reads,
-          git diffs, test output, build logs) are matched against 30+ known
-          patterns and compressed using domain-specific strategies.
+          <strong>Deterministic preprocessing</strong> &mdash; Zero-latency rule-based transforms:
+          ANSI escape codes stripped, repeated stack frames deduplicated, JSON whitespace collapsed,
+          progress bars removed.
         </li>
         <li>
-          <strong>Deduplication</strong> &mdash; Content that has appeared in
-          previous turns of the same conversation is deduplicated so the model
-          doesn&apos;t re-read identical data.
-        </li>
-        <li>
-          <strong>AI compression</strong> &mdash; For large content blocks that
-          don&apos;t match a known pattern, a small, fast model summarises the
-          content while preserving all actionable information.
-        </li>
-        <li>
-          <strong>Expand tool injection</strong> &mdash; An{" "}
-          <code>squeezr_expand</code> tool is injected into the request so the
-          model can retrieve full original content on demand.
-        </li>
-        <li>
-          <strong>Forwarding</strong> &mdash; The optimised request is forwarded
-          to the real API. The response is streamed back unmodified.
+          <strong>Tool-specific patterns</strong> &mdash; 30+ rules matched against git, test
+          runners, build output, package managers, infra tools, and more. Errors and actionable
+          information are always preserved.
         </li>
       </ol>
 
-      <h2>Check your savings</h2>
-      <p>
-        After a few interactions, check how much Squeezr has saved:
-      </p>
-      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
-        <code>{`curl http://localhost:8080/squeezr/stats`}</code>
-      </pre>
-      <p>You will see a JSON response with token counts:</p>
-      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
-        <code>{`{
-  "totalOriginalTokens": 284102,
-  "totalCompressedTokens": 98435,
-  "savings": "65.4%",
-  "requestsProcessed": 47,
-  "cacheHits": 23,
-  "uptime": "1h 12m"
-}`}</code>
-      </pre>
+      <h2>Typical savings</h2>
+      <ul>
+        <li><strong>Per tool result:</strong> 70&ndash;95% reduction depending on tool</li>
+        <li><strong>Per session (2 hours):</strong> ~200K tokens &rarr; ~80K tokens (60% savings)</li>
+        <li><strong>System prompt:</strong> ~13KB &rarr; ~600 tokens (cached)</li>
+      </ul>
 
       <h2>Next steps</h2>
       <ul>

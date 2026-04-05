@@ -4,95 +4,62 @@ export default function ClaudeCodePage() {
   return (
     <DocPage title="Claude Code">
       <p>
-        Claude Code is the primary target for Squeezr. Because Claude Code
-        sends large tool results (file reads, shell output, search results) in
-        every turn, it benefits the most from compression &mdash; typically
-        saving 50&ndash;70% of input tokens.
+        Claude Code is the primary target for Squeezr. Because it sends large tool results
+        (file reads, shell output, search results) in every turn, it benefits the most from
+        compression &mdash; typically saving 50&ndash;70% of input tokens per session.
       </p>
 
       <h2>Setup</h2>
       <p>
-        Set the <code>ANTHROPIC_BASE_URL</code> environment variable so Claude
-        Code sends requests through the Squeezr proxy:
+        Run <code>squeezr setup</code> once. It automatically sets{" "}
+        <code>ANTHROPIC_BASE_URL=http://localhost:8080</code> in your environment.
+        No manual configuration needed.
+      </p>
+      <p>
+        Then start the proxy:
       </p>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
-        <code>{`export ANTHROPIC_BASE_URL=http://localhost:8080/anthropic`}</code>
+        <code>{`squeezr setup   # one-time
+squeezr start`}</code>
       </pre>
       <p>
-        Add this to your shell profile (<code>~/.bashrc</code>,{" "}
-        <code>~/.zshrc</code>) so it persists. Your existing{" "}
-        <code>ANTHROPIC_API_KEY</code> continues to work &mdash; Squeezr
-        forwards it to the Anthropic API.
+        Claude Code reads <code>ANTHROPIC_BASE_URL</code> automatically and routes all API calls
+        through the proxy. Your existing <code>ANTHROPIC_API_KEY</code> or OAuth token continues
+        to work &mdash; Squeezr forwards it to the Anthropic API transparently.
       </p>
 
       <h3>OAuth support</h3>
       <p>
-        If you use Claude Code with OAuth authentication (Claude Max/Team/Enterprise),
-        Squeezr detects and forwards OAuth tokens transparently. No additional
-        configuration is needed.
-      </p>
-
-      <h3>API key support</h3>
-      <p>
-        Both <code>x-api-key</code> header and <code>ANTHROPIC_API_KEY</code>{" "}
-        environment variable are supported. Squeezr never stores or logs your
-        API key.
+        Claude Max, Team, and Enterprise plans authenticate via OAuth tokens instead of API keys.
+        Squeezr detects and forwards OAuth tokens transparently. No additional configuration is
+        needed.
       </p>
 
       <h2>How it works with Claude Code</h2>
+
+      <h3>Layer 1: System prompt compression</h3>
       <p>
-        Squeezr performs several optimizations specifically designed for the
-        Anthropic Messages API format used by Claude Code:
+        Claude Code&apos;s system prompt is ~13KB and is sent with every request. Squeezr compresses
+        it once using a cheap AI model (Haiku) and caches the result. Every subsequent request
+        reuses the cached version, saving ~3,000 tokens per request.
       </p>
 
-      <h3>Tool result compression</h3>
+      <h3>Layer 2: Deterministic preprocessing</h3>
       <p>
-        Claude Code uses tools like <code>Read</code>, <code>Bash</code>,{" "}
-        <code>Grep</code>, and <code>Glob</code> that return large text blocks.
-        Squeezr compresses these tool results using pattern-specific strategies:
+        Zero-latency rule-based transforms applied to every tool result before anything else:
       </p>
       <ul>
-        <li>
-          <strong>File reads</strong> are deduplicated across turns &mdash; if
-          the same file was read earlier in the conversation and hasn&apos;t changed,
-          the content is replaced with a short reference.
-        </li>
-        <li>
-          <strong>Shell output</strong> (git diffs, test results, build logs)
-          is matched against 30+ patterns and compressed using domain-specific
-          rules that preserve errors and actionable information.
-        </li>
-        <li>
-          <strong>Search results</strong> from Grep and Glob are compacted by
-          removing redundant path prefixes and grouping results.
-        </li>
+        <li>ANSI escape codes and progress bars stripped</li>
+        <li>Duplicate stack frames and repeated lines deduplicated</li>
+        <li>JSON whitespace collapsed</li>
+        <li>Blank lines consolidated</li>
       </ul>
 
-      <h3>Cross-turn file read deduplication</h3>
+      <h3>Layer 3: Tool-specific patterns</h3>
       <p>
-        When Claude Code reads the same file multiple times in a conversation,
-        Squeezr detects the duplication and replaces repeated reads with a
-        compact reference: <code>[file already in context: path/to/file.ts]</code>.
-        This alone can save thousands of tokens in long sessions.
+        Each tool result is matched against 30+ specialized patterns. Errors and actionable
+        information are always preserved:
       </p>
-
-      <h3>Expand tool injection</h3>
-      <p>
-        Squeezr injects a <code>squeezr_expand</code> tool definition into
-        each request. If Claude needs the full uncompressed content of a
-        compressed block, it can call this tool with the block&apos;s ID. The
-        original content is served from an in-memory store. This ensures zero
-        information loss.
-      </p>
-
-      <h3>System prompt optimization</h3>
-      <p>
-        Claude Code&apos;s system prompt is large and repeated in every request.
-        Squeezr caches it and replaces repeated instances with a hash reference,
-        saving tokens on every turn after the first.
-      </p>
-
-      <h2>Supported tools</h2>
       <table>
         <thead>
           <tr>
@@ -104,7 +71,7 @@ export default function ClaudeCodePage() {
         <tbody>
           <tr>
             <td><code>Read</code></td>
-            <td>Cross-turn dedup, line dedup</td>
+            <td>Cross-turn dedup, large file &rarr; signatures only</td>
             <td>40&ndash;90%</td>
           </tr>
           <tr>
@@ -114,12 +81,12 @@ export default function ClaudeCodePage() {
           </tr>
           <tr>
             <td><code>Grep</code></td>
-            <td>Path prefix dedup, result grouping</td>
+            <td>Grouped by file, matches capped</td>
             <td>30&ndash;60%</td>
           </tr>
           <tr>
             <td><code>Glob</code></td>
-            <td>Path prefix dedup</td>
+            <td>Directory tree summary (&gt;30 files)</td>
             <td>30&ndash;50%</td>
           </tr>
           <tr>
@@ -127,51 +94,94 @@ export default function ClaudeCodePage() {
             <td>AI summarization</td>
             <td>60&ndash;80%</td>
           </tr>
+        </tbody>
+      </table>
+
+      <h3>Cross-turn file read deduplication</h3>
+      <p>
+        When Claude Code reads the same file multiple times in a conversation, Squeezr detects
+        the duplication and replaces repeated reads with a compact reference pointer. This alone
+        can save thousands of tokens in long sessions.
+      </p>
+
+      <h3>Adaptive pressure</h3>
+      <p>
+        Compression aggressiveness scales automatically with context window usage:
+      </p>
+      <table>
+        <thead>
           <tr>
-            <td><code>NotebookEdit</code></td>
-            <td>Output truncation</td>
-            <td>40&ndash;70%</td>
+            <th>Context usage</th>
+            <th>Threshold</th>
+            <th>Behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>&lt; 50%</td>
+            <td>1,500 chars</td>
+            <td>Light &mdash; only compress large results</td>
+          </tr>
+          <tr>
+            <td>50&ndash;75%</td>
+            <td>800 chars</td>
+            <td>Normal &mdash; standard compression</td>
+          </tr>
+          <tr>
+            <td>75&ndash;90%</td>
+            <td>400 chars</td>
+            <td>Aggressive &mdash; compress most results</td>
+          </tr>
+          <tr>
+            <td>&gt; 90%</td>
+            <td>150 chars</td>
+            <td>Critical &mdash; compress everything, 0 git diff context</td>
           </tr>
         </tbody>
       </table>
 
+      <h2>Per-command skip</h2>
+      <p>
+        Add <code># squeezr:skip</code> anywhere in a Bash command to bypass compression for
+        that specific result:
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`cat important-file.txt  # squeezr:skip`}</code>
+      </pre>
+
       <h2>Configuration tips</h2>
       <ul>
         <li>
-          <strong>Aggressive mode for large repos</strong> &mdash; If you work
-          with large monorepos, increase the compression aggressiveness:
+          <strong>Skip specific tools:</strong>
           <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
             <code>{`[compression]
-aggressiveness = "high"
-min_size = 200`}</code>
+skip_tools = ["Read"]`}</code>
           </pre>
         </li>
         <li>
-          <strong>Skip specific tools</strong> &mdash; If you never want to
-          compress results from a specific tool:
+          <strong>Only compress specific tools:</strong>
           <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
             <code>{`[compression]
-skip_tools = ["WebFetch"]`}</code>
+only_tools = ["Bash"]`}</code>
           </pre>
         </li>
         <li>
-          <strong>Adaptive thresholds</strong> &mdash; Squeezr automatically
-          adjusts compression based on conversation length. Long conversations
-          get more aggressive compression.
+          <strong>Raise the threshold</strong> to compress less (fewer false positives):
+          <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+            <code>{`[compression]
+threshold = 1500`}</code>
+          </pre>
         </li>
       </ul>
 
       <h2>Verifying it works</h2>
-      <p>
-        After a few interactions with Claude Code, check the proxy stats:
-      </p>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
-        <code>{`curl http://localhost:8080/squeezr/stats`}</code>
+        <code>{`squeezr status`}</code>
       </pre>
       <p>
-        You should see a positive <code>savings</code> percentage. If
-        savings are below 20%, check the{" "}
-        <a href="/docs/troubleshooting">troubleshooting guide</a>.
+        After a few interactions, you should see a positive savings percentage. Check the{" "}
+        <a href="/docs/troubleshooting">troubleshooting guide</a> if you see 502 errors or
+        the proxy is not intercepting requests.
       </p>
     </DocPage>
   );
