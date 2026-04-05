@@ -75,7 +75,7 @@ export function SavingsCalculator() {
                     <button key={p.name} onClick={() => setProviderIdx(i)}
                       className={`px-3 py-2.5 rounded-xl text-xs font-medium transition-all border ${
                         providerIdx === i
-                          ? "bg-blue-600/10 text-blue-600 dark:text-blue-500 border-blue-600/30"
+                          ? "bg-green-700/10 text-green-700 dark:text-green-500 border-green-700/30"
                           : "text-neutral-500 border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700"
                       }`}>
                       {p.name}
@@ -96,7 +96,7 @@ export function SavingsCalculator() {
 
               <div className="p-5 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
                 <div className="text-xs text-neutral-500 uppercase tracking-wider mb-1">{t.calculator.tokensSavedMonth}</div>
-                <motion.div key={savings.tokensPerMonth} initial={{ opacity: 0.5, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-extrabold text-blue-600 dark:text-blue-500">
+                <motion.div key={savings.tokensPerMonth} initial={{ opacity: 0.5, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-extrabold text-green-700 dark:text-green-500">
                   {(savings.tokensPerMonth / 1_000_000).toFixed(1)}M
                 </motion.div>
                 <div className="text-xs text-neutral-400 dark:text-neutral-600 mt-1">{t.calculator.sessionsNote}</div>

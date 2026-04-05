@@ -1,8 +1,21 @@
+"use client";
 import { DocPage } from "@/components/DocPage";
+import { useI18n } from "@/lib/i18n";
 
 export default function ConfigurationPage() {
+  const { locale } = useI18n();
+  const isEs = locale === "es";
+
   return (
-    <DocPage title="Configuration">
+    <DocPage title={isEs ? "Configuración" : "Configuration"}>
+      {isEs ? <Es /> : <En />}
+    </DocPage>
+  );
+}
+
+function En() {
+  return (
+    <>
       <p>
         Squeezr is configured via TOML files. The global config lives next to the binary and is
         deep-merged with an optional per-project config.
@@ -150,6 +163,161 @@ skip_tools = ["WebFetch"] # never compress web fetches in this project
 [adaptive]
 critical_threshold = 100  # push harder when context is nearly full`}</code>
       </pre>
-    </DocPage>
+    </>
+  );
+}
+
+function Es() {
+  return (
+    <>
+      <p>
+        Squeezr se configura mediante archivos TOML. La configuración global se encuentra junto al
+        binario y se fusiona en profundidad con una configuración opcional por proyecto.
+      </p>
+
+      <h2>Ubicación de archivos de configuración</h2>
+
+      <h3>Configuración global: <code>squeezr.toml</code></h3>
+      <p>
+        Se encuentra junto al binario instalado (en el prefijo global de npm). Se crea
+        automáticamente con valores por defecto en la primera ejecución. Usa{" "}
+        <code>squeezr config</code> para ver su ruta resuelta y los valores actuales.
+      </p>
+
+      <h3>Configuración de proyecto: <code>.squeezr.toml</code></h3>
+      <p>
+        Colócalo en la raíz de tu proyecto. Los ajustes aquí se fusionan en profundidad sobre la
+        configuración global. Útil para ajustar la compresión por repositorio (ej. compresión más
+        agresiva para monorepos grandes, o saltar herramientas específicas).
+      </p>
+
+      <h2>Referencia completa de configuración</h2>
+
+      <h3>[proxy]</h3>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`[proxy]
+port = 8080        # HTTP proxy port (Claude Code, Aider, Gemini CLI)
+mitm_port = 8081   # MITM proxy port (Codex) — defaults to port + 1`}</code>
+      </pre>
+
+      <h3>[compression]</h3>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`[compression]
+threshold = 800              # min chars to trigger compression
+keep_recent = 3              # last N tool results left uncompressed
+compress_system_prompt = true
+compress_conversation = false  # compress assistant messages too (aggressive)
+# skip_tools = ["Read"]        # never compress these tools
+# only_tools = ["Bash"]        # only compress these tools`}</code>
+      </pre>
+
+      <h3>[cache]</h3>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`[cache]
+enabled = true
+max_entries = 1000`}</code>
+      </pre>
+
+      <h3>[adaptive]</h3>
+      <p>
+        La presión adaptativa escala la agresividad de la compresión según el uso de la ventana
+        de contexto.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`[adaptive]
+enabled = true
+low_threshold = 1500      # < 50% context: only compress results > 1500 chars
+mid_threshold = 800       # 50–75% context: standard compression
+high_threshold = 400      # 75–90% context: aggressive
+critical_threshold = 150  # > 90% context: compress everything`}</code>
+      </pre>
+
+      <h3>[local]</h3>
+      <p>
+        Configura un modelo local para compresión (usado cuando tu herramienta de codificación es
+        Ollama, o como backend de compresión de respaldo).
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`[local]
+enabled = true
+upstream_url = "http://localhost:11434"
+compression_model = "qwen2.5-coder:1.5b"`}</code>
+      </pre>
+
+      <h2>Variables de entorno</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Variable</th>
+            <th>Por defecto</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>SQUEEZR_PORT</code></td>
+            <td><code>8080</code></td>
+            <td>Puerto del proxy HTTP</td>
+          </tr>
+          <tr>
+            <td><code>SQUEEZR_MITM_PORT</code></td>
+            <td><code>8081</code></td>
+            <td>Puerto del proxy MITM (Codex)</td>
+          </tr>
+          <tr>
+            <td><code>SQUEEZR_THRESHOLD</code></td>
+            <td><code>800</code></td>
+            <td>Mínimo de caracteres para comprimir</td>
+          </tr>
+          <tr>
+            <td><code>SQUEEZR_KEEP_RECENT</code></td>
+            <td><code>3</code></td>
+            <td>Resultados recientes sin comprimir</td>
+          </tr>
+          <tr>
+            <td><code>SQUEEZR_DISABLED</code></td>
+            <td><code>false</code></td>
+            <td>Desactivar toda la compresión</td>
+          </tr>
+          <tr>
+            <td><code>SQUEEZR_DRY_RUN</code></td>
+            <td><code>false</code></td>
+            <td>Registrar ahorro sin comprimir</td>
+          </tr>
+          <tr>
+            <td><code>SQUEEZR_LOCAL_UPSTREAM</code></td>
+            <td><code>http://localhost:11434</code></td>
+            <td>URL de Ollama/LM Studio</td>
+          </tr>
+          <tr>
+            <td><code>SQUEEZR_LOCAL_MODEL</code></td>
+            <td><code>qwen2.5-coder:1.5b</code></td>
+            <td>Modelo local de compresión</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Saltar por comando</h2>
+      <p>
+        Añade <code># squeezr:skip</code> en cualquier parte de un comando Bash para omitir la
+        compresión de ese resultado específico:
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`cat my-file.json  # squeezr:skip`}</code>
+      </pre>
+
+      <h2>Ejemplo: configuración de proyecto</h2>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`# .squeezr.toml — in your project root
+
+[compression]
+threshold = 400           # more aggressive for this large monorepo
+compress_conversation = true
+skip_tools = ["WebFetch"] # never compress web fetches in this project
+
+[adaptive]
+critical_threshold = 100  # push harder when context is nearly full`}</code>
+      </pre>
+    </>
   );
 }

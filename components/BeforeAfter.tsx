@@ -21,7 +21,7 @@ const examples = [
       { text: "1 failed | 5 passed · 2 failed | 186 passed", color: "text-neutral-500 dark:text-neutral-600" },
     ],
     after: [
-      { text: "[squeezr:a4c2d1 -92%]", color: "text-blue-600 dark:text-blue-500" },
+      { text: "[squeezr:a4c2d1 -92%]", color: "text-green-700 dark:text-green-500" },
       { text: "6 suites, 188 tests (2 FAILED):", color: "text-neutral-700 dark:text-neutral-300" },
       { text: "server.test.ts: streaming(500!=200)", color: "text-neutral-700 dark:text-neutral-300" },
       { text: "health: Cannot read undefined", color: "text-neutral-700 dark:text-neutral-300" },
@@ -42,7 +42,7 @@ const examples = [
       { text: "3200  export { app }", color: "text-neutral-700 dark:text-neutral-300" },
     ],
     after: [
-      { text: "[squeezr:b7e3f4 -97%]", color: "text-blue-600 dark:text-blue-500" },
+      { text: "[squeezr:b7e3f4 -97%]", color: "text-green-700 dark:text-green-500" },
       { text: "server.ts: 3200 lines", color: "text-neutral-700 dark:text-neutral-300" },
       { text: "Exports: app (Hono)", color: "text-neutral-700 dark:text-neutral-300" },
       { text: "Routes: /v1/messages, /v1/chat/completions", color: "text-neutral-700 dark:text-neutral-300" },
@@ -58,12 +58,12 @@ const examples = [
       { text: "diff --git a/src/proxy.ts b/src/proxy.ts", color: "text-neutral-500 dark:text-neutral-400" },
       { text: "--- a/src/proxy.ts", color: "text-red-600" },
       { text: "+++ b/src/proxy.ts", color: "text-green-700 dark:text-green-600" },
-      { text: "@@ -142,8 +142,12 @@ export function handle()", color: "text-blue-600 dark:text-blue-500" },
+      { text: "@@ -142,8 +142,12 @@ export function handle()", color: "text-green-700 dark:text-green-500" },
       { text: "-  const res = await fetch(url)", color: "text-red-500/70" },
       { text: "+  const res = await fetch(url, { cache: true })", color: "text-green-600/70" },
     ],
     after: [
-      { text: "[squeezr:c9d4e2 -82%]", color: "text-blue-600 dark:text-blue-500" },
+      { text: "[squeezr:c9d4e2 -82%]", color: "text-green-700 dark:text-green-500" },
       { text: "47 files, +234 -189 lines", color: "text-neutral-700 dark:text-neutral-300" },
       { text: "proxy.ts: +cache option in fetch()", color: "text-neutral-700 dark:text-neutral-300" },
       { text: "config.ts: new cacheDir setting", color: "text-neutral-700 dark:text-neutral-300" },
@@ -96,7 +96,7 @@ export function BeforeAfter() {
                 onClick={() => { setActive(i); setShowAfter(false); }}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all border ${
                   active === i
-                    ? "bg-blue-600/10 text-blue-600 dark:text-blue-500 border-blue-600/30"
+                    ? "bg-green-700/10 text-green-700 dark:text-green-500 border-green-700/30"
                     : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 border-transparent"
                 }`}
               >
@@ -168,7 +168,7 @@ export function BeforeAfter() {
 
             <motion.div className="flex items-center justify-center gap-6 mt-4 text-xs" layout>
               <span className="text-neutral-500">{ex.beforeChars.toLocaleString()} chars</span>
-              <svg className="w-4 h-4 text-blue-600 dark:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-green-700 dark:text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
               <span className="text-green-700 dark:text-green-600 font-bold">{ex.afterChars} chars</span>

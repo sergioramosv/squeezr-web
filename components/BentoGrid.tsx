@@ -9,7 +9,7 @@ import { FiZap, FiCpu, FiCopy, FiDatabase, FiSearch, FiSettings } from "react-ic
 
 const featureKeys = ["patterns", "ai", "dedup", "cache", "expand", "zero"] as const;
 const featureMeta: { big: boolean; demo: "pattern" | "ai" | null; iconColor: string; icon: ReactNode }[] = [
-  { big: true, demo: "pattern", iconColor: "#2563eb", icon: <FiZap className="w-5 h-5" /> },
+  { big: true, demo: "pattern", iconColor: "#16a34a", icon: <FiZap className="w-5 h-5" /> },
   { big: true, demo: "ai", iconColor: "#7c3aed", icon: <FiCpu className="w-5 h-5" /> },
   { big: false, demo: null, iconColor: "#ea580c", icon: <FiCopy className="w-5 h-5" /> },
   { big: false, demo: null, iconColor: "#16a34a", icon: <FiDatabase className="w-5 h-5" /> },
@@ -42,7 +42,7 @@ function PatternDemo() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: i * 0.1 }}
-            className={compressed ? "text-blue-600 dark:text-blue-500" : "text-neutral-500 dark:text-neutral-400"}
+            className={compressed ? "text-green-700 dark:text-green-500" : "text-neutral-500 dark:text-neutral-400"}
           >
             {compressed ? l.after : l.before}
           </motion.span>
@@ -61,7 +61,7 @@ function AIDemo() {
   const models = [
     { name: "Haiku", color: "#ea580c", ms: "120ms" },
     { name: "GPT-mini", color: "#16a34a", ms: "95ms" },
-    { name: "Flash", color: "#2563eb", ms: "80ms" },
+    { name: "Flash", color: "#16a34a", ms: "80ms" },
   ];
   const [active, setActive] = useState(-1);
   const ref = useRef(null);
@@ -123,7 +123,7 @@ export function BentoGrid() {
       <div className="max-w-6xl mx-auto">
         <ScrollReveal>
           <div className="text-center mb-16">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-500 mb-3 block">Features</span>
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-green-700 dark:text-green-500 mb-3 block">Features</span>
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
               {t.features.patterns.title.includes("30") ? "Everything you need" : "Todo lo que necesitas"}
             </h2>
@@ -139,7 +139,7 @@ export function BentoGrid() {
                     <FeatureIcon color={featureMeta[i].iconColor} icon={featureMeta[i].icon} />
                     <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-600 group-hover:text-neutral-600 dark:group-hover:text-neutral-400 transition-colors">{f.tag}</span>
                   </div>
-                  <h3 className="text-base font-semibold text-neutral-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-500 transition-colors">{f.title}</h3>
+                  <h3 className="text-base font-semibold text-neutral-900 dark:text-white mb-2 group-hover:text-green-700 dark:group-hover:text-green-500 transition-colors">{f.title}</h3>
                   <p className="text-sm text-neutral-500 leading-relaxed">{f.desc}</p>
                   {f.demo === "pattern" && <PatternDemo />}
                   {f.demo === "ai" && <AIDemo />}

@@ -9,7 +9,7 @@ import { ReactNode } from "react";
 
 const stepKeys = ["system", "dedup", "noise", "patterns", "lineDedup", "ai", "cache"] as const;
 const stepMeta: { pct: number; icon: ReactNode; color: string }[] = [
-  { pct: 95, icon: <FiFileText className="w-5 h-5" />, color: "#2563eb" },
+  { pct: 95, icon: <FiFileText className="w-5 h-5" />, color: "#16a34a" },
   { pct: 80, icon: <FiCopy className="w-5 h-5" />, color: "#7c3aed" },
   { pct: 30, icon: <FiFilter className="w-5 h-5" />, color: "#ea580c" },
   { pct: 60, icon: <FiTool className="w-5 h-5" />, color: "#d97706" },
@@ -67,7 +67,7 @@ function PipelineNode({ title, desc, pct, icon, color, index, total }: {
       <div className="flex-1 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h4 className="text-sm font-semibold text-neutral-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-500 transition-colors">
+            <h4 className="text-sm font-semibold text-neutral-900 dark:text-white group-hover:text-green-700 dark:group-hover:text-green-500 transition-colors">
               <span className="text-neutral-400 dark:text-neutral-600 text-xs font-mono mr-2">{String(index + 1).padStart(2, "0")}</span>
               {title}
             </h4>

@@ -8,7 +8,7 @@ import { useI18n } from "@/lib/i18n";
 
 const compressionKeys = ["test", "file", "diff", "system"] as const;
 const compressionMeta = [
-  { before: 2340, after: 198, pct: 92, color: "#2563eb" },
+  { before: 2340, after: 198, pct: 92, color: "#16a34a" },
   { before: 3200, after: 84, pct: 97, color: "#7c3aed" },
   { before: 1800, after: 320, pct: 82, color: "#ea580c" },
   { before: 13000, after: 600, pct: 95, color: "#16a34a" },
@@ -83,7 +83,7 @@ function DonutChart({ label }: { label: string }) {
         <motion.circle
           cx="100" cy="100" r="80"
           fill="none"
-          stroke="#2563eb"
+          stroke="#16a34a"
           strokeWidth="16"
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -113,7 +113,7 @@ export function CompressionVisualizer() {
       <div className="max-w-6xl mx-auto">
         <ScrollReveal>
           <div className="text-center mb-16">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-500 mb-3 block">{t.compression.label}</span>
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-green-700 dark:text-green-500 mb-3 block">{t.compression.label}</span>
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">{t.compression.title}</h2>
             <p className="text-neutral-500 dark:text-neutral-400 max-w-lg mx-auto">{t.compression.desc}</p>
           </div>

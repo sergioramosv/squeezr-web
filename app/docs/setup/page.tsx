@@ -1,8 +1,21 @@
+"use client";
 import { DocPage } from "@/components/DocPage";
+import { useI18n } from "@/lib/i18n";
 
 export default function SetupPage() {
+  const { locale } = useI18n();
+  const isEs = locale === "es";
+
   return (
-    <DocPage title="Setup">
+    <DocPage title={isEs ? "Configuracion inicial" : "Setup"}>
+      {isEs ? <Es /> : <En />}
+    </DocPage>
+  );
+}
+
+function En() {
+  return (
+    <>
       <p>
         Run <code>squeezr setup</code> once after installation. It configures
         everything automatically &mdash; env vars, shell wrapper, auto-start, and TLS certificates.
@@ -153,6 +166,163 @@ mitm_port = 9091`}</code>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
         <code>{`squeezr status`}</code>
       </pre>
-    </DocPage>
+    </>
+  );
+}
+
+function Es() {
+  return (
+    <>
+      <p>
+        Ejecuta <code>squeezr setup</code> una vez despues de la instalacion. Configura
+        todo automaticamente &mdash; variables de entorno, wrapper de shell, auto-inicio y certificados TLS.
+        No necesitas editar perfiles de shell ni establecer variables de entorno manualmente.
+      </p>
+
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr setup
+squeezr start`}</code>
+      </pre>
+
+      <p>
+        Eso es todo lo necesario para Claude Code, Aider, Gemini CLI y Ollama.
+        Codex requiere un paso adicional por sesion descrito a continuacion.
+      </p>
+
+      <h2>Que hace el setup</h2>
+
+      <h3>Variables de entorno</h3>
+      <p>
+        Establece las siguientes variables en tu entorno de usuario (registro de Windows / macOS/Linux{" "}
+        <code>~/.bashrc</code> o <code>~/.zshrc</code>):
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`ANTHROPIC_BASE_URL=http://localhost:8080
+GEMINI_API_BASE_URL=http://localhost:8080`}</code>
+      </pre>
+      <p>
+        Tus API keys existentes no se modifican. Squeezr las reenvia a la API upstream
+        automaticamente.
+      </p>
+
+      <h3>Wrapper de shell</h3>
+      <p>
+        Dado que los procesos hijos no pueden modificar el entorno del shell padre, el setup instala una
+        funcion wrapper persistente para que las variables de entorno se actualicen en la terminal actual sin reiniciarla:
+      </p>
+      <ul>
+        <li>
+          <strong>Windows:</strong> funcion agregada al <code>$PROFILE</code> de PowerShell
+        </li>
+        <li>
+          <strong>Linux / macOS / WSL:</strong> funcion agregada a <code>~/.bashrc</code> o{" "}
+          <code>~/.zshrc</code>
+        </li>
+      </ul>
+      <p>
+        Despues de ejecutar el setup, abre una nueva terminal una vez (o haz source de tu perfil) y el wrapper estara
+        activo en todas las sesiones futuras.
+      </p>
+
+      <h3>Auto-inicio</h3>
+      <p>
+        Registra Squeezr para que se inicie automaticamente tras un reinicio:
+      </p>
+      <ul>
+        <li><strong>Windows:</strong> Task Scheduler o NSSM</li>
+        <li><strong>Linux:</strong> servicio de usuario systemd</li>
+        <li><strong>macOS:</strong> agente launchd</li>
+      </ul>
+
+      <h3>Certificados TLS (para Codex MITM)</h3>
+      <ul>
+        <li>
+          <strong>Windows:</strong> importa la CA MITM en el almacen de certificados de Windows a
+          nivel de usuario (sin necesidad de admin)
+        </li>
+        <li>
+          <strong>macOS/Linux/WSL:</strong> genera un bundle de CA en{" "}
+          <code>~/.squeezr/mitm-ca/bundle.crt</code> y establece <code>NODE_EXTRA_CA_CERTS</code>
+        </li>
+      </ul>
+
+      <h2>Notas especificas por herramienta</h2>
+
+      <h3>Claude Code</h3>
+      <p>
+        Funciona automaticamente despues del setup. Claude Code lee <code>ANTHROPIC_BASE_URL</code> y
+        enruta todas las llamadas API a traves del proxy. No se necesita configuracion adicional.
+      </p>
+
+      <h3>Aider</h3>
+      <p>
+        Establece <code>ANTHROPIC_BASE_URL</code> (ya hecho por el setup) para modelos de Anthropic, o
+        configura <code>openai_base_url</code> en tu <code>.aider.conf.yml</code> para modelos de
+        OpenAI:
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`# .aider.conf.yml
+openai_base_url: http://localhost:8080`}</code>
+      </pre>
+
+      <h3>Gemini CLI</h3>
+      <p>
+        Funciona automaticamente despues del setup. Gemini CLI lee <code>GEMINI_API_BASE_URL</code>.
+      </p>
+
+      <h3>Ollama</h3>
+      <p>
+        Squeezr detecta Ollama automaticamente cuando ve una API key ficticia (p. ej.{" "}
+        <code>ollama</code>) o una URL upstream local. No se necesita configuracion adicional si
+        estas usando Ollama con una herramienta que ya apunta al proxy.
+      </p>
+      <p>
+        Para usar un modelo local para la compresion en si, configura en <code>squeezr.toml</code>:
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`[local]
+enabled = true
+upstream_url = "http://localhost:11434"
+compression_model = "qwen2.5-coder:1.5b"`}</code>
+      </pre>
+
+      <h3>Codex</h3>
+      <p>
+        Codex usa WebSocket sobre TLS hacia <code>chatgpt.com</code> y no puede ser redirigido mediante una
+        simple sobreescritura de URL base. Squeezr ejecuta un proxy MITM con terminacion TLS en el puerto 8081.
+      </p>
+      <p>
+        Establece <code>HTTPS_PROXY</code> <strong>solo en la sesion de terminal donde ejecutas Codex</strong>
+        &mdash; no lo establezcas globalmente ya que rompera otras herramientas:
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`# Run this in the terminal where you launch Codex — not globally
+HTTPS_PROXY=http://localhost:8081 codex`}</code>
+      </pre>
+      <p>
+        Consulta la <a href="/docs/codex">guia de Codex</a> para el desglose tecnico completo.
+      </p>
+
+      <h2>Cambiar puertos</h2>
+      <p>
+        Para cambiar el puerto del proxy HTTP (por defecto 8080) o el puerto del proxy MITM (por defecto 8081):
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr ports`}</code>
+      </pre>
+      <p>
+        O edita <code>squeezr.toml</code> directamente:
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`[proxy]
+port = 9090
+mitm_port = 9091`}</code>
+      </pre>
+
+      <h2>Verificar la conexion</h2>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr status`}</code>
+      </pre>
+    </>
   );
 }

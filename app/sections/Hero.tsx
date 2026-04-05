@@ -19,7 +19,6 @@ const terminalLines = [
   { output: "", delay: 100 },
 ];
 
-/* Inline compression animation data */
 const compressionSteps = [
   { label: "vitest run", original: "2,340 chars", compressed: "198 chars", pct: 92 },
   { label: "cat server.ts", original: "3,200 lines", compressed: "84 chars", pct: 97 },
@@ -37,10 +36,10 @@ function CompressionTicker() {
           transition={{ delay: 3.5 + i * 0.6, duration: 0.4 }}
           className="flex items-center justify-between text-xs font-mono px-3 py-2 rounded-lg bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800"
         >
-          <span className="text-neutral-500 dark:text-neutral-500">{s.label}</span>
+          <span className="text-neutral-500">{s.label}</span>
           <div className="flex items-center gap-2">
             <span className="text-neutral-400 dark:text-neutral-600 line-through">{s.original}</span>
-            <span className="text-green-700 dark:text-green-600 font-bold">{s.compressed}</span>
+            <span className="text-green-700 dark:text-green-500 font-bold">{s.compressed}</span>
             <span className="text-[10px] font-bold text-white bg-green-700 dark:bg-green-600 px-1.5 py-0.5 rounded">
               -{s.pct}%
             </span>
@@ -60,7 +59,6 @@ export function HeroSection() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-28 md:py-36 w-full">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left: text */}
           <div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -80,7 +78,7 @@ export function HeroSection() {
             >
               <span className="text-neutral-900 dark:text-white">{t.hero.title1}</span>
               <br />
-              <span className="text-blue-600 dark:text-blue-500">{t.hero.title2}</span>
+              <span className="text-green-700 dark:text-green-500">{t.hero.title2}</span>
             </motion.h1>
 
             <motion.p
@@ -102,7 +100,7 @@ export function HeroSection() {
             >
               <Link
                 href="/docs"
-                className="group px-7 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all text-sm flex items-center gap-2 hover:-translate-y-0.5"
+                className="group px-7 py-3.5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl transition-all text-sm flex items-center gap-2 hover:-translate-y-0.5"
               >
                 {t.hero.cta}
                 <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
@@ -116,7 +114,6 @@ export function HeroSection() {
               </a>
             </motion.div>
 
-            {/* Animated stats */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -134,13 +131,12 @@ export function HeroSection() {
               </div>
               <div className="w-px bg-neutral-200 dark:bg-neutral-800" />
               <div>
-                <AnimatedCounter target={95} suffix="%" className="text-3xl font-extrabold text-green-700 dark:text-green-600" />
+                <AnimatedCounter target={95} suffix="%" className="text-3xl font-extrabold text-green-700 dark:text-green-500" />
                 <div className="text-neutral-500 text-xs mt-1">{t.hero.stats.compression}</div>
               </div>
             </motion.div>
           </div>
 
-          {/* Right: Terminal + live compression ticker */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}

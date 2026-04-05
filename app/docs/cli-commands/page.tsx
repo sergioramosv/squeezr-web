@@ -1,8 +1,21 @@
+"use client";
 import { DocPage } from "@/components/DocPage";
+import { useI18n } from "@/lib/i18n";
 
 export default function CliCommandsPage() {
+  const { locale } = useI18n();
+  const isEs = locale === "es";
+
   return (
-    <DocPage title="CLI Commands">
+    <DocPage title={isEs ? "Comandos CLI" : "CLI Commands"}>
+      {isEs ? <Es /> : <En />}
+    </DocPage>
+  );
+}
+
+function En() {
+  return (
+    <>
       <p>
         The Squeezr CLI manages the proxy lifecycle. All commands are available
         after installing with <code>npm install -g squeezr-ai</code>.
@@ -160,6 +173,170 @@ export default function CliCommandsPage() {
           </tr>
         </tbody>
       </table>
-    </DocPage>
+    </>
+  );
+}
+
+function Es() {
+  return (
+    <>
+      <p>
+        El CLI de Squeezr gestiona el ciclo de vida del proxy. Todos los comandos están disponibles
+        después de instalar con <code>npm install -g squeezr-ai</code>.
+      </p>
+
+      <h2>squeezr setup</h2>
+      <p>
+        Configuración inicial única que configura todo automáticamente: variables de entorno,
+        wrapper de shell, auto-inicio y certificados TLS. Ejecutar una vez después de la instalación.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr setup`}</code>
+      </pre>
+      <p>Qué hace:</p>
+      <ul>
+        <li>Establece <code>ANTHROPIC_BASE_URL</code> y <code>GEMINI_API_BASE_URL</code> en tu entorno de usuario.</li>
+        <li>Instala un wrapper de shell en PowerShell <code>$PROFILE</code> (Windows) o <code>~/.bashrc</code> / <code>~/.zshrc</code> (Linux/macOS/WSL) que actualiza automáticamente las variables de entorno sin reiniciar la terminal.</li>
+        <li>Registra auto-inicio (Task Scheduler en Windows, systemd en Linux, launchd en macOS).</li>
+        <li>Genera e instala el certificado CA MITM para soporte de Codex.</li>
+      </ul>
+
+      <h2>squeezr start</h2>
+      <p>Inicia el proxy como un daemon en segundo plano.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr start`}</code>
+      </pre>
+      <p>
+        Inicia tanto el proxy HTTP (puerto 8080) como el proxy MITM (puerto 8081). Si se detecta
+        una discrepancia de versión después de una actualización, se reinicia automáticamente con el binario correcto.
+      </p>
+
+      <h2>squeezr stop</h2>
+      <p>Detiene el daemon del proxy en ejecución.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr stop`}</code>
+      </pre>
+
+      <h2>squeezr status</h2>
+      <p>Muestra si el proxy está ejecutándose, en qué puertos y el PID.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr status`}</code>
+      </pre>
+
+      <h2>squeezr update</h2>
+      <p>
+        Detiene el proxy en ejecución, instala la última versión desde npm y reinicia automáticamente.
+        También ejecuta setup para actualizar variables de entorno y wrappers de shell.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr update`}</code>
+      </pre>
+
+      <h2>squeezr logs</h2>
+      <p>Muestra las últimas 50 líneas de log.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr logs`}</code>
+      </pre>
+
+      <h2>squeezr config</h2>
+      <p>Imprime la configuración resuelta actual.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr config`}</code>
+      </pre>
+
+      <h2>squeezr ports</h2>
+      <p>Prompt interactivo para cambiar el puerto del proxy HTTP y el puerto del proxy MITM. Actualiza las variables de entorno automáticamente.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr ports`}</code>
+      </pre>
+
+      <h2>squeezr gain</h2>
+      <p>Estima el ahorro de tokens para un directorio analizando los archivos que contiene.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr gain`}</code>
+      </pre>
+
+      <h2>squeezr discover</h2>
+      <p>Detecta qué CLIs de IA están instalados en tu sistema.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr discover`}</code>
+      </pre>
+
+      <h2>squeezr uninstall</h2>
+      <p>
+        Elimina todo lo que Squeezr instaló: variables de entorno, certificados CA, entradas de
+        auto-inicio y archivos de log. Ejecuta <code>npm uninstall -g squeezr-ai</code> después para eliminar
+        el paquete.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr uninstall`}</code>
+      </pre>
+
+      <h2>squeezr version</h2>
+      <p>Imprime la versión instalada.</p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr version`}</code>
+      </pre>
+
+      <h2>Resumen de comandos</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>squeezr setup</code></td>
+            <td>Configurar variables de entorno, wrapper de shell, auto-inicio, certificado CA</td>
+          </tr>
+          <tr>
+            <td><code>squeezr start</code></td>
+            <td>Iniciar el daemon del proxy</td>
+          </tr>
+          <tr>
+            <td><code>squeezr stop</code></td>
+            <td>Detener el daemon del proxy</td>
+          </tr>
+          <tr>
+            <td><code>squeezr status</code></td>
+            <td>Mostrar estado del proxy</td>
+          </tr>
+          <tr>
+            <td><code>squeezr update</code></td>
+            <td>Actualizar a la última versión y reiniciar</td>
+          </tr>
+          <tr>
+            <td><code>squeezr logs</code></td>
+            <td>Mostrar las últimas 50 líneas de log</td>
+          </tr>
+          <tr>
+            <td><code>squeezr config</code></td>
+            <td>Imprimir configuración actual</td>
+          </tr>
+          <tr>
+            <td><code>squeezr ports</code></td>
+            <td>Cambiar puertos del proxy HTTP y MITM</td>
+          </tr>
+          <tr>
+            <td><code>squeezr gain</code></td>
+            <td>Estimar ahorro de tokens para un directorio</td>
+          </tr>
+          <tr>
+            <td><code>squeezr discover</code></td>
+            <td>Detectar CLIs de IA instalados</td>
+          </tr>
+          <tr>
+            <td><code>squeezr uninstall</code></td>
+            <td>Eliminar Squeezr completamente</td>
+          </tr>
+          <tr>
+            <td><code>squeezr version</code></td>
+            <td>Imprimir versión</td>
+          </tr>
+        </tbody>
+      </table>
+    </>
   );
 }

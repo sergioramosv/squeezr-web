@@ -22,7 +22,7 @@ export function GridBackground() {
       }} />
       {/* Soft color accent — dark only */}
       <div className="absolute top-[-20%] left-[10%] w-[500px] h-[500px] rounded-full hidden dark:block"
-        style={{ background: "#2563eb", opacity: 0.04, filter: "blur(120px)" }}
+        style={{ background: "#16a34a", opacity: 0.04, filter: "blur(120px)" }}
       />
       <div className="absolute bottom-[-10%] right-[10%] w-[400px] h-[400px] rounded-full hidden dark:block"
         style={{ background: "#7c3aed", opacity: 0.03, filter: "blur(120px)" }}

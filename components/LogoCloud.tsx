@@ -18,12 +18,12 @@ interface Tool {
 const tools: Tool[] = [
   { name: "Claude Code", desc: "Anthropic Messages API", icon: <FiTerminal className="w-5 h-5" />, color: "#ea580c" },
   { name: "OpenAI Codex", desc: "Chat Completions API", icon: <SiOpenai className="w-5 h-5" />, color: "#16a34a" },
-  { name: "Aider", desc: "OpenAI-compatible", icon: <FiCode className="w-5 h-5" />, color: "#2563eb" },
+  { name: "Aider", desc: "OpenAI-compatible", icon: <FiCode className="w-5 h-5" />, color: "#16a34a" },
   { name: "Gemini CLI", desc: "Google AI API", icon: <FiZap className="w-5 h-5" />, color: "#7c3aed" },
   { name: "Ollama", desc: "Local inference", icon: <FiBox className="w-5 h-5" />, color: "#525252" },
   { name: "LM Studio", desc: "Local inference", icon: <FiLayers className="w-5 h-5" />, color: "#0d9488" },
   { name: "Continue", desc: "VS Code & JetBrains", icon: <FiCode className="w-5 h-5" />, color: "#dc2626" },
-  { name: "Cursor IDE", desc: "Coming soon", icon: <FiMonitor className="w-5 h-5" />, color: "#2563eb", soon: true },
+  { name: "Cursor IDE", desc: "Coming soon", icon: <FiMonitor className="w-5 h-5" />, color: "#16a34a", soon: true },
 ];
 
 export function LogoCloud() {

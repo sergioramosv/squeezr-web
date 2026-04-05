@@ -1,8 +1,21 @@
+"use client";
 import { DocPage } from "@/components/DocPage";
+import { useI18n } from "@/lib/i18n";
 
 export default function ExpandToolPage() {
+  const { locale } = useI18n();
+  const isEs = locale === "es";
+
   return (
-    <DocPage title="Expand Tool">
+    <DocPage title={isEs ? "Herramienta Expand" : "Expand Tool"}>
+      {isEs ? <Es /> : <En />}
+    </DocPage>
+  );
+}
+
+function En() {
+  return (
+    <>
       <p>
         The expand tool is the mechanism that makes Squeezr&apos;s compression
         lossless. When content is compressed, the model receives a summary
@@ -151,6 +164,162 @@ ERRORS:
         the stream, resolves the ID, and includes the full content in the
         next request from the coding tool.
       </p>
-    </DocPage>
+    </>
+  );
+}
+
+function Es() {
+  return (
+    <>
+      <p>
+        La herramienta expand es el mecanismo que hace que la compresion de Squeezr sea
+        sin perdida. Cuando el contenido se comprime, el modelo recibe un resumen
+        mas un ID. Si el modelo necesita el contenido original completo, llama a la herramienta{" "}
+        <code>squeezr_expand</code> con ese ID.
+      </p>
+
+      <h2>Como funciona</h2>
+      <p>El mecanismo de expand sigue cinco pasos:</p>
+      <ol>
+        <li>
+          <strong>Compresion</strong> &mdash; Cuando Squeezr comprime el resultado
+          de una herramienta, almacena el contenido original completo en el expand store
+          (en memoria, indexado por un ID de 6 caracteres).
+        </li>
+        <li>
+          <strong>Insercion de marcador</strong> &mdash; La salida comprimida
+          incluye un marcador como{" "}
+          <code>[squeezr:a3f2b1 -65%]</code> que le indica al modelo que el contenido
+          fue comprimido y proporciona el ID.
+        </li>
+        <li>
+          <strong>Inyeccion de herramienta</strong> &mdash; Squeezr inyecta una
+          definicion de la herramienta{" "}
+          <code>squeezr_expand</code> en la solicitud a la API para que
+          el modelo sepa que puede recuperar el contenido completo.
+        </li>
+        <li>
+          <strong>El modelo llama a expand</strong> &mdash; Si el modelo determina
+          que necesita el contenido completo (por ejemplo, para encontrar una linea especifica en un archivo),
+          llama a <code>squeezr_expand</code> con el ID.
+        </li>
+        <li>
+          <strong>El proxy intercepta</strong> &mdash; Squeezr intercepta la
+          llamada a la herramienta expand en la respuesta del modelo, busca el ID en el
+          expand store y devuelve el contenido original completo como resultado
+          de la herramienta en la siguiente solicitud.
+        </li>
+      </ol>
+
+      <h2>Formato comprimido</h2>
+      <p>
+        Cuando el contenido se comprime, sigue este formato:
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`[squeezr:ID -SAVINGS%] SUMMARY
+
+Example:
+[squeezr:a3f2b1 -65%] Git diff: 3 files changed.
+- src/auth.ts: Added JWT validation in login handler (lines 45-67)
+- src/middleware.ts: Added auth middleware check
+- tests/auth.test.ts: 2 new test cases for JWT flow
+
+ERRORS:
+- Line 52: Missing return type annotation`}</code>
+      </pre>
+      <p>
+        El resumen preserva toda la informacion accionable: errores, advertencias,
+        rutas de archivos, numeros de linea y cambios clave. Solo se eliminan el
+        boilerplate y las repeticiones.
+      </p>
+
+      <h2>Definicion de herramienta (formato Anthropic)</h2>
+      <p>
+        Para solicitudes a la API de Anthropic, Squeezr inyecta esta definicion de herramienta:
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`{
+  "name": "squeezr_expand",
+  "description": "Retrieve the full original content of a Squeezr-compressed tool result. Use this when you need more detail than the compressed summary provides.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "The 6-char ID from [squeezr:ID] in the compressed content"
+      }
+    },
+    "required": ["id"]
+  }
+}`}</code>
+      </pre>
+
+      <h2>Definicion de herramienta (formato OpenAI)</h2>
+      <p>
+        Para solicitudes compatibles con OpenAI, la herramienta se inyecta en formato
+        de llamada a funciones:
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`{
+  "type": "function",
+  "function": {
+    "name": "squeezr_expand",
+    "description": "Retrieve the full original content of a Squeezr-compressed tool result. Use this when you need more detail than the compressed summary provides.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The 6-char ID from [squeezr:ID] in the compressed content"
+        }
+      },
+      "required": ["id"]
+    }
+  }
+}`}</code>
+      </pre>
+
+      <h2>Comportamiento</h2>
+
+      <h3>Cuando llama el modelo a expand?</h3>
+      <p>
+        En la practica, los modelos llaman a expand raramente &mdash; tipicamente menos del 5%
+        de los bloques comprimidos se expanden. Esto se debe a que los resumenes de compresion
+        estan disenados para incluir toda la informacion accionable. El modelo
+        solo necesita expandir cuando:
+      </p>
+      <ul>
+        <li>Necesita referenciar un numero de linea especifico en un archivo.</li>
+        <li>Necesita la sintaxis exacta del codigo que fue resumido.</li>
+        <li>La compresion fue demasiado agresiva para la tarea especifica.</li>
+      </ul>
+
+      <h3>Que pasa si el ID ha expirado?</h3>
+      <p>
+        Los IDs de expand estan limitados a la sesion del proxy. Si el proxy se reinicia, todos
+        los IDs de la sesion anterior se invalidan. Si el modelo intenta
+        expandir un ID expirado, recibe un mensaje:
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`{
+  "error": "Content not found. The ID may have expired or the proxy may have restarted. Ask the user to re-read the file or re-run the command."
+}`}</code>
+      </pre>
+
+      <h3>Rendimiento</h3>
+      <p>
+        Las llamadas a expand se sirven desde memoria y son extremadamente rapidas (tipicamente
+        menos de 5ms). No cuentan contra los limites de tasa de la API ya que son
+        manejadas completamente por el proxy.
+      </p>
+
+      <h3>Compatibilidad con streaming</h3>
+      <p>
+        La herramienta expand funciona con respuestas en streaming. Cuando el modelo
+        genera una llamada a la herramienta expand durante el streaming, Squeezr la detecta en
+        el stream, resuelve el ID e incluye el contenido completo en la
+        siguiente solicitud de la herramienta de codigo.
+      </p>
+    </>
   );
 }

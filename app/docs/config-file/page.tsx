@@ -1,8 +1,21 @@
+"use client";
 import { DocPage } from "@/components/DocPage";
+import { useI18n } from "@/lib/i18n";
 
 export default function ConfigFilePage() {
+  const { locale } = useI18n();
+  const isEs = locale === "es";
+
   return (
-    <DocPage title="Config File Reference">
+    <DocPage title={isEs ? "Referencia del Archivo de Configuración" : "Config File Reference"}>
+      {isEs ? <Es /> : <En />}
+    </DocPage>
+  );
+}
+
+function En() {
+  return (
+    <>
       <p>
         Squeezr uses TOML for configuration. This page is the complete reference for every key in
         the config file, organized by section.
@@ -238,6 +251,248 @@ enabled = true
 upstream_url = "http://localhost:11434"
 compression_model = "qwen2.5-coder:1.5b"`}</code>
       </pre>
-    </DocPage>
+    </>
+  );
+}
+
+function Es() {
+  return (
+    <>
+      <p>
+        Squeezr usa TOML para la configuración. Esta página es la referencia completa de cada clave
+        en el archivo de configuración, organizada por sección.
+      </p>
+
+      <h2>Ubicación de archivos</h2>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`# Global config — next to the installed binary (in npm global prefix)
+squeezr.toml
+
+# Project config — deep-merged over global, apply per-repo overrides
+.squeezr.toml   (in your project root)`}</code>
+      </pre>
+      <p>
+        Usa <code>squeezr config</code> para imprimir la ruta resuelta y los valores actuales.
+      </p>
+
+      <h2>[proxy]</h2>
+      <p>Controla los puertos del servidor proxy.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Clave</th>
+            <th>Tipo</th>
+            <th>Por defecto</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>port</code></td>
+            <td>integer</td>
+            <td><code>8080</code></td>
+            <td>Puerto del proxy HTTP (Claude Code, Aider, Gemini CLI).</td>
+          </tr>
+          <tr>
+            <td><code>mitm_port</code></td>
+            <td>integer</td>
+            <td><code>8081</code></td>
+            <td>Puerto del proxy MITM (Codex). Por defecto port + 1.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>[compression]</h2>
+      <p>Controla cómo y cuándo se comprime el contenido.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Clave</th>
+            <th>Tipo</th>
+            <th>Por defecto</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>threshold</code></td>
+            <td>integer</td>
+            <td><code>800</code></td>
+            <td>Tamaño mínimo de contenido (caracteres) para activar la compresión.</td>
+          </tr>
+          <tr>
+            <td><code>keep_recent</code></td>
+            <td>integer</td>
+            <td><code>3</code></td>
+            <td>Últimos N resultados de herramientas que se dejan sin comprimir.</td>
+          </tr>
+          <tr>
+            <td><code>compress_system_prompt</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Comprimir y cachear el system prompt.</td>
+          </tr>
+          <tr>
+            <td><code>compress_conversation</code></td>
+            <td>boolean</td>
+            <td><code>false</code></td>
+            <td>También comprimir mensajes del asistente (modo agresivo).</td>
+          </tr>
+          <tr>
+            <td><code>skip_tools</code></td>
+            <td>array</td>
+            <td><code>[]</code></td>
+            <td>Nombres de herramientas que nunca se comprimen (ej. <code>[&quot;Read&quot;]</code>).</td>
+          </tr>
+          <tr>
+            <td><code>only_tools</code></td>
+            <td>array</td>
+            <td><code>[]</code></td>
+            <td>Solo comprimir estas herramientas, omitir todas las demás (ej. <code>[&quot;Bash&quot;]</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>[cache]</h2>
+      <p>Controla el almacenamiento en caché en proceso de resultados comprimidos.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Clave</th>
+            <th>Tipo</th>
+            <th>Por defecto</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>enabled</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Habilitar la caché.</td>
+          </tr>
+          <tr>
+            <td><code>max_entries</code></td>
+            <td>integer</td>
+            <td><code>1000</code></td>
+            <td>Número máximo de resultados comprimidos en caché.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>[adaptive]</h2>
+      <p>
+        La presión adaptativa aumenta automáticamente la agresividad de la compresión a medida
+        que la ventana de contexto se llena.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Clave</th>
+            <th>Tipo</th>
+            <th>Por defecto</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>enabled</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Habilitar compresión adaptativa.</td>
+          </tr>
+          <tr>
+            <td><code>low_threshold</code></td>
+            <td>integer</td>
+            <td><code>1500</code></td>
+            <td>Mín. de caracteres para comprimir cuando el contexto está por debajo del 50%.</td>
+          </tr>
+          <tr>
+            <td><code>mid_threshold</code></td>
+            <td>integer</td>
+            <td><code>800</code></td>
+            <td>Mín. de caracteres para comprimir cuando el contexto está al 50&ndash;75%.</td>
+          </tr>
+          <tr>
+            <td><code>high_threshold</code></td>
+            <td>integer</td>
+            <td><code>400</code></td>
+            <td>Mín. de caracteres para comprimir cuando el contexto está al 75&ndash;90%.</td>
+          </tr>
+          <tr>
+            <td><code>critical_threshold</code></td>
+            <td>integer</td>
+            <td><code>150</code></td>
+            <td>Mín. de caracteres para comprimir cuando el contexto supera el 90%. Contexto de git diff se establece en 0.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>[local]</h2>
+      <p>Configuración para servidores de modelos locales (Ollama) usados como backend de compresión.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Clave</th>
+            <th>Tipo</th>
+            <th>Por defecto</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>enabled</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Habilitar soporte de modelo local.</td>
+          </tr>
+          <tr>
+            <td><code>upstream_url</code></td>
+            <td>string</td>
+            <td><code>&quot;http://localhost:11434&quot;</code></td>
+            <td>URL del servidor de modelo local.</td>
+          </tr>
+          <tr>
+            <td><code>compression_model</code></td>
+            <td>string</td>
+            <td><code>&quot;qwen2.5-coder:1.5b&quot;</code></td>
+            <td>Modelo local a usar para compresión con IA.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Ejemplo completo</h2>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`# squeezr.toml
+
+[proxy]
+port = 8080
+mitm_port = 8081
+
+[compression]
+threshold = 800
+keep_recent = 3
+compress_system_prompt = true
+compress_conversation = false
+# skip_tools = ["Read"]
+# only_tools = ["Bash"]
+
+[cache]
+enabled = true
+max_entries = 1000
+
+[adaptive]
+enabled = true
+low_threshold = 1500
+mid_threshold = 800
+high_threshold = 400
+critical_threshold = 150
+
+[local]
+enabled = true
+upstream_url = "http://localhost:11434"
+compression_model = "qwen2.5-coder:1.5b"`}</code>
+      </pre>
+    </>
   );
 }
