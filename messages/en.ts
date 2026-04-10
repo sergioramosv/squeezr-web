@@ -5,7 +5,7 @@ const en = {
     npm: "npm",
   },
   hero: {
-    badge: "v1.17.1 · 219 tests · MIT",
+    badge: "v1.21.0 · 240 tests · MIT",
     title1: "Compress your",
     title2: "AI context window",
     desc: "Local proxy that compresses tool outputs, deduplicates file reads, and strips noise.",

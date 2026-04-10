@@ -35,7 +35,7 @@ function En() {
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
         <code>{`{
   "status": "ok",
-  "version": "1.17.0",
+  "version": "1.21.0",
   "uptime": 7351
 }`}</code>
       </pre>
@@ -58,6 +58,44 @@ function En() {
       </pre>
       <p>
         Returns 404 if the ID is not found (expired or from a previous session).
+      </p>
+
+      <h3>GET /squeezr/dashboard</h3>
+      <p>
+        Serves the built-in web dashboard UI. Open <code>http://localhost:8080/squeezr/dashboard</code>{" "}
+        in your browser to access the interactive dashboard with real-time stats, project history,
+        and configuration management.
+      </p>
+
+      <h3>GET /squeezr/limits</h3>
+      <p>
+        Returns current rate limit status for all configured providers, including remaining requests,
+        token budgets, and reset timestamps.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`curl http://localhost:8080/squeezr/limits`}</code>
+      </pre>
+
+      <h3>GET /squeezr/project</h3>
+      <p>
+        Returns information about the currently active project: name, path, configuration overrides,
+        and per-project compression statistics.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`curl http://localhost:8080/squeezr/project`}</code>
+      </pre>
+
+      <h3>GET /squeezr/events</h3>
+      <p>
+        Server-Sent Events (SSE) stream for real-time proxy activity. The dashboard uses this
+        endpoint to show live compression events as they happen.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`curl -N http://localhost:8080/squeezr/events`}</code>
+      </pre>
+      <p>
+        Events include: <code>compression</code> (each compressed request), <code>stats</code>{" "}
+        (periodic stats updates), and <code>session</code> (session start/end).
       </p>
 
       <h2>Proxy behavior</h2>
@@ -157,7 +195,7 @@ function Es() {
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
         <code>{`{
   "status": "ok",
-  "version": "1.17.0",
+  "version": "1.21.0",
   "uptime": 7351
 }`}</code>
       </pre>
@@ -180,6 +218,44 @@ function Es() {
       </pre>
       <p>
         Devuelve 404 si el ID no se encuentra (expirado o de una sesion anterior).
+      </p>
+
+      <h3>GET /squeezr/dashboard</h3>
+      <p>
+        Sirve la interfaz web del dashboard integrado. Abre <code>http://localhost:8080/squeezr/dashboard</code>{" "}
+        en tu navegador para acceder al dashboard interactivo con estadisticas en tiempo real,
+        historial de proyectos y gestion de configuracion.
+      </p>
+
+      <h3>GET /squeezr/limits</h3>
+      <p>
+        Devuelve el estado actual de limites de tasa para todos los proveedores configurados,
+        incluyendo peticiones restantes, presupuestos de tokens y timestamps de reinicio.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`curl http://localhost:8080/squeezr/limits`}</code>
+      </pre>
+
+      <h3>GET /squeezr/project</h3>
+      <p>
+        Devuelve informacion sobre el proyecto activo actual: nombre, ruta, sobreescrituras de
+        configuracion y estadisticas de compresion por proyecto.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`curl http://localhost:8080/squeezr/project`}</code>
+      </pre>
+
+      <h3>GET /squeezr/events</h3>
+      <p>
+        Stream de Server-Sent Events (SSE) para actividad del proxy en tiempo real. El dashboard
+        usa este endpoint para mostrar eventos de compresion en vivo mientras ocurren.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`curl -N http://localhost:8080/squeezr/events`}</code>
+      </pre>
+      <p>
+        Los eventos incluyen: <code>compression</code> (cada peticion comprimida), <code>stats</code>{" "}
+        (actualizaciones periodicas de estadisticas) y <code>session</code> (inicio/fin de sesion).
       </p>
 
       <h2>Comportamiento del proxy</h2>

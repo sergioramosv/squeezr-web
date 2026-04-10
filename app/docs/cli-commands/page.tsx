@@ -91,6 +91,27 @@ function En() {
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
         <code>{`squeezr gain`}</code>
       </pre>
+      <p>Options:</p>
+      <ul>
+        <li><code>--session</code> &mdash; Show savings from the current live session instead of estimating from files.</li>
+        <li><code>--details</code> &mdash; Show per-request breakdown with individual compression ratios.</li>
+      </ul>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr gain --session --details`}</code>
+      </pre>
+
+      <h2>squeezr tunnel</h2>
+      <p>
+        Opens a secure tunnel (via Cloudflare) that exposes your local Squeezr proxy to the internet.
+        Useful for tools like Cursor IDE that cannot connect to <code>localhost</code> directly.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr tunnel`}</code>
+      </pre>
+      <p>
+        Prints a public <code>https://</code> URL that you can use as your API base URL in tools
+        that don&apos;t support localhost. The tunnel stays open until you press Ctrl+C or stop the proxy.
+      </p>
 
       <h2>squeezr discover</h2>
       <p>Detects which AI CLIs are installed on your system.</p>
@@ -157,7 +178,11 @@ function En() {
           </tr>
           <tr>
             <td><code>squeezr gain</code></td>
-            <td>Estimate token savings for a directory</td>
+            <td>Estimate token savings (supports --session, --details)</td>
+          </tr>
+          <tr>
+            <td><code>squeezr tunnel</code></td>
+            <td>Open a public tunnel to the local proxy</td>
           </tr>
           <tr>
             <td><code>squeezr discover</code></td>
@@ -255,6 +280,27 @@ function Es() {
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
         <code>{`squeezr gain`}</code>
       </pre>
+      <p>Opciones:</p>
+      <ul>
+        <li><code>--session</code> &mdash; Muestra el ahorro de la sesión activa en vez de estimar desde archivos.</li>
+        <li><code>--details</code> &mdash; Muestra desglose por petición con ratios de compresión individuales.</li>
+      </ul>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr gain --session --details`}</code>
+      </pre>
+
+      <h2>squeezr tunnel</h2>
+      <p>
+        Abre un túnel seguro (via Cloudflare) que expone tu proxy Squeezr local a internet.
+        Útil para herramientas como Cursor IDE que no pueden conectarse a <code>localhost</code> directamente.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr tunnel`}</code>
+      </pre>
+      <p>
+        Imprime una URL pública <code>https://</code> que puedes usar como URL base de API en herramientas
+        que no soportan localhost. El túnel permanece abierto hasta que presiones Ctrl+C o detengas el proxy.
+      </p>
 
       <h2>squeezr discover</h2>
       <p>Detecta qué CLIs de IA están instalados en tu sistema.</p>
@@ -321,7 +367,11 @@ function Es() {
           </tr>
           <tr>
             <td><code>squeezr gain</code></td>
-            <td>Estimar ahorro de tokens para un directorio</td>
+            <td>Estimar ahorro de tokens (soporta --session, --details)</td>
+          </tr>
+          <tr>
+            <td><code>squeezr tunnel</code></td>
+            <td>Abrir un túnel público al proxy local</td>
           </tr>
           <tr>
             <td><code>squeezr discover</code></td>

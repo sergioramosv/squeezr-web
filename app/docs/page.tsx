@@ -28,6 +28,7 @@ function useSections() {
         { title: "Cursor IDE", href: "/docs/cursor", desc: isEs ? "BYOK + Override Base URL. Modos chat y agente comprimidos. Usa squeezr tunnel si localhost falla." : "BYOK + Override Base URL. Chat and agent modes compressed. Use squeezr tunnel if localhost fails." },
         { title: "Continue Extension", href: "/docs/continue", desc: isEs ? "VS Code y JetBrains. Sin necesidad de tunnel — http://localhost:8080/v1 funciona directamente." : "VS Code and JetBrains. No tunnel needed — http://localhost:8080/v1 works directly." },
         { title: isEs ? "Configuracion" : "Configuration", href: "/docs/configuration", desc: isEs ? "Referencia de squeezr.toml, variables de entorno, sobreescrituras por proyecto con .squeezr.toml." : "squeezr.toml reference, env vars, per-project .squeezr.toml overrides." },
+        { title: "Dashboard", href: "/docs/dashboard", desc: isEs ? "Dashboard web integrado: Overview, Projects, History, Limits y Settings en tiempo real." : "Built-in web dashboard: Overview, Projects, History, Limits, and Settings in real time." },
       ],
     },
     {
@@ -43,10 +44,11 @@ function useSections() {
       title: isEs ? "Referencia" : "Reference",
       icon: (<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>),
       items: [
-        { title: isEs ? "Comandos CLI" : "CLI Commands", href: "/docs/cli-commands", desc: "setup, start, stop, status, update, logs, config, ports, gain, discover, uninstall, version." },
+        { title: isEs ? "Comandos CLI" : "CLI Commands", href: "/docs/cli-commands", desc: "setup, start, stop, status, update, logs, config, ports, gain, tunnel, discover, uninstall, version." },
         { title: isEs ? "Archivo de configuracion" : "Config File", href: "/docs/config-file", desc: isEs ? "Referencia completa de squeezr.toml con todas las secciones y valores por defecto." : "Complete squeezr.toml reference with all sections and defaults." },
-        { title: "API Endpoints", href: "/docs/api-endpoints", desc: isEs ? "Endpoints de salud, estadisticas, expansion y tabla de enrutamiento del proxy." : "Health, stats, expand endpoints and proxy routing table." },
+        { title: "API Endpoints", href: "/docs/api-endpoints", desc: isEs ? "Endpoints de salud, estadisticas, expansion, dashboard, limites, proyecto, eventos SSE y tabla de enrutamiento." : "Health, stats, expand, dashboard, limits, project, SSE events, and proxy routing table." },
         { title: "Expand Tool", href: "/docs/expand-tool", desc: isEs ? "Como funciona squeezr_expand() y su mecanismo de recuperacion sin perdidas." : "How squeezr_expand() works and its lossless retrieval mechanism." },
+        { title: isEs ? "Servidor MCP" : "MCP Server", href: "/docs/mcp-server", desc: isEs ? "9 herramientas MCP: status, stats, set_mode, config, habits, stop, check_updates, update, set_project." : "9 MCP tools: status, stats, set_mode, config, habits, stop, check_updates, update, set_project." },
       ],
     },
   ];
