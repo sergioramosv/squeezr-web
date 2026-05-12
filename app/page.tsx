@@ -1,4 +1,5 @@
 import { HeroSection } from "./sections/HeroV2";
+import { CursorAnnouncement } from "@/components/CursorAnnouncement";
 import { LogoCloud } from "@/components/LogoCloud";
 import { CompressionVisualizer } from "@/components/CompressionVisualizer";
 import { PipelineFlow } from "@/components/PipelineFlow";
@@ -13,6 +14,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
+      <CursorAnnouncement />
       <LogoCloud />
       <CompressionVisualizer />
       <PipelineFlow />

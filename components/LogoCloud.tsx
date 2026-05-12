@@ -17,7 +17,7 @@ const tools: Tool[] = [
   { name: "Ollama", desc: "Local inference", icon: <FiBox className="w-5 h-5" /> },
   { name: "LM Studio", desc: "Local inference", icon: <FiLayers className="w-5 h-5" /> },
   { name: "Continue", desc: "VS Code & JetBrains", icon: <FiCode className="w-5 h-5" /> },
-  { name: "Cursor IDE", desc: "Coming soon", icon: <FiMonitor className="w-5 h-5" />, soon: true },
+  { name: "Cursor IDE", desc: "MITM Proxy", icon: <FiMonitor className="w-5 h-5" /> },
 ];
 
 export function LogoCloud() {
