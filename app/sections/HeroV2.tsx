@@ -39,11 +39,6 @@ export function HeroSection() {
   return (
     <section className="relative w-full h-screen -mt-16 bg-black overflow-hidden flex flex-col items-center justify-center">
 
-      {/* ── Shockwave ring — fires at impact ── */}
-      <AnimatePresence>
-        {phase === "impact" && <ImpactRing key="ring" />}
-      </AnimatePresence>
-
       {/* ── SQUEEZR ── */}
       <AnimatePresence>
         {phase !== "idle" && (
@@ -57,16 +52,14 @@ export function HeroSection() {
 
             animate={
               phase === "big"
-                ? { scale: 4.5, opacity: 1, filter: "blur(0px)", x: 0 }
+                ? { scale: 4.5, opacity: 1, x: 0 }
                 : isCompressing
                   ? {
-                      // motion blur during, overcompress, bounce + shake at end
-                      scale:  [4.5, 4.5, 0.88, 1],
-                      filter: ["blur(0px)", "blur(0px)", "blur(5px)", "blur(0px)"],
-                      x:      [0, 0, 0, -6, 6, -3, 3, 0],
+                      scale:   [4.5, 4.5, 0.88, 1],
+                      x:       [0, 0, 0, -6, 6, -3, 3, 0],
                       opacity: 1,
                     }
-                  : { scale: 4.5, opacity: 1, filter: "blur(0px)", x: 0 }
+                  : { scale: 4.5, opacity: 1, x: 0 }
             }
 
             transition={
