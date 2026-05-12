@@ -3,8 +3,8 @@
 import { useI18n } from "@/lib/i18n";
 import { motion } from "framer-motion";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "./ScrollReveal";
-import { FiTerminal, FiCode, FiZap, FiBox, FiLayers, FiMonitor, FiCloud } from "react-icons/fi";
-import { SiOpenai, SiVisualstudiocode } from "react-icons/si";
+import { FiTerminal, FiCode, FiZap, FiBox, FiLayers, FiMonitor, FiCloud, FiGrid } from "react-icons/fi";
+import { SiOpenai } from "react-icons/si";
 import { ReactNode } from "react";
 
 interface Tool { name: string; desc: string; icon: ReactNode; soon?: boolean; }
@@ -18,8 +18,8 @@ const tools: Tool[] = [
   { name: "LM Studio", desc: "Local inference", icon: <FiLayers className="w-5 h-5" /> },
   { name: "Continue", desc: "VS Code & JetBrains", icon: <FiCode className="w-5 h-5" /> },
   { name: "Cursor IDE",   desc: "MITM Proxy",  icon: <FiMonitor          className="w-5 h-5" /> },
-  { name: "VS Code",      desc: "Coming soon", icon: <SiVisualstudiocode className="w-5 h-5" />, soon: true },
-  { name: "Antigravity",  desc: "Coming soon", icon: <FiCloud            className="w-5 h-5" />, soon: true },
+  { name: "VS Code",     desc: "Coming soon", icon: <FiCode  className="w-5 h-5" />, soon: true },
+  { name: "Antigravity", desc: "Coming soon", icon: <FiGrid  className="w-5 h-5" />, soon: true },
 ];
 
 export function LogoCloud() {
