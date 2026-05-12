@@ -59,6 +59,10 @@ export function HeroSection() {
   return (
     <section className="relative w-full h-screen -mt-16 bg-[#020a04] overflow-hidden flex flex-col items-center justify-center">
 
+      {/* ── Top fade so navbar blends cleanly ── */}
+      <div className="absolute top-0 left-0 right-0 h-32 pointer-events-none z-10"
+        style={{ background: "linear-gradient(to bottom, #020a04 0%, transparent 100%)" }} />
+
       {/* ── Beams ── */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
@@ -134,12 +138,13 @@ export function HeroSection() {
         {phase === "done" && (
           <motion.p
             key="tagline"
-            className="relative z-10 font-mono text-neutral-400 tracking-[0.35em] uppercase text-xs mt-5"
+            className="relative z-10 text-white/70 text-base mt-6 font-medium"
+            style={{ letterSpacing: "0.01em" }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 1.1, ease: "easeOut" }}
           >
-            compress · save · ship faster
+            Save up to <span className="text-green-400 font-bold">91% of tokens</span> — zero workflow changes.
           </motion.p>
         )}
       </AnimatePresence>

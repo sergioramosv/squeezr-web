@@ -26,17 +26,17 @@ export function Navbar() {
   const { t } = useI18n();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-xl">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-transparent backdrop-blur-sm">
       <div className="max-w-6xl mx-auto flex items-center justify-between h-16 px-6">
         <Link href="/" className="flex items-center gap-2 font-extrabold text-base tracking-wide">
-          <Logo size={24} className="text-neutral-900 dark:text-white" />
-          <span className="text-neutral-900 dark:text-white uppercase tracking-[0.08em]">Squeezr</span>
+          <Logo size={24} className="text-white" />
+          <span className="text-white uppercase tracking-[0.08em]">Squeezr</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-1">
-          <Link href="/docs" className="px-3 py-1.5 text-sm text-neutral-600 dark:text-neutral-400 hover:text-green-700 dark:hover:text-green-500 rounded-lg hover:bg-neutral-100 dark:hover:bg-white/[0.04] transition-colors">{t.nav.docs}</Link>
-          <a href="https://github.com/sergioramosv/Squeezr" target="_blank" rel="noopener" className="px-3 py-1.5 text-sm text-neutral-600 dark:text-neutral-400 hover:text-green-700 dark:hover:text-green-500 rounded-lg hover:bg-neutral-100 dark:hover:bg-white/[0.04] transition-colors">{t.nav.github}</a>
-          <a href="https://www.npmjs.com/package/squeezr-ai" target="_blank" rel="noopener" className="px-3 py-1.5 text-sm text-neutral-600 dark:text-neutral-400 hover:text-green-700 dark:hover:text-green-500 rounded-lg hover:bg-neutral-100 dark:hover:bg-white/[0.04] transition-colors">{t.nav.npm}</a>
+          <Link href="/docs" className="px-3 py-1.5 text-sm text-white/60 hover:text-white rounded-lg hover:bg-white/[0.06] transition-colors">{t.nav.docs}</Link>
+          <a href="https://github.com/sergioramosv/Squeezr" target="_blank" rel="noopener" className="px-3 py-1.5 text-sm text-white/60 hover:text-white rounded-lg hover:bg-white/[0.06] transition-colors">{t.nav.github}</a>
+          <a href="https://www.npmjs.com/package/squeezr-ai" target="_blank" rel="noopener" className="px-3 py-1.5 text-sm text-white/60 hover:text-white rounded-lg hover:bg-white/[0.06] transition-colors">{t.nav.npm}</a>
           <div className="ml-2 pl-2 border-l border-neutral-800 flex items-center gap-1">
             <LanguageToggle />
           </div>
