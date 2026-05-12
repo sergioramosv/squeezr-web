@@ -39,6 +39,30 @@ export function HeroSection() {
   return (
     <section className="relative w-full h-screen -mt-16 bg-black overflow-hidden flex flex-col items-center justify-center">
 
+      {/* ── Radial ambient glow — pulses at impact ── */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        animate={phase === "impact" ? { opacity: [1, 5, 1] } : { opacity: 1 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+        style={{
+          background: "radial-gradient(ellipse 75% 55% at 50% 50%, rgba(34,197,94,0.07) 0%, rgba(34,197,94,0.02) 40%, transparent 70%)",
+        }}
+      />
+
+      {/* ── Film grain ── */}
+      <div
+        className="grain absolute pointer-events-none z-20"
+        style={{ inset: "-20%", width: "140%", height: "140%", opacity: 0.038 }}
+      >
+        <svg width="100%" height="100%">
+          <filter id="grain-f">
+            <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="4" stitchTiles="stitch"/>
+            <feColorMatrix type="saturate" values="0"/>
+          </filter>
+          <rect width="100%" height="100%" filter="url(#grain-f)"/>
+        </svg>
+      </div>
+
       {/* ── SQUEEZR ── */}
       <AnimatePresence>
         {phase !== "idle" && (
