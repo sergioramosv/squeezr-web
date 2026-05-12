@@ -3,46 +3,85 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-type Phase = "idle" | "big" | "compress" | "done";
+// Total compression duration
+const PRESS_MS = 1700;
 
-// Ease that feels like a hydraulic press:
-// starts with controlled force, slows as resistance builds
-const PRESS_EASE = [0.4, 0, 0.2, 1] as const;
-const PRESS_DURATION = 1.6;
+type Phase = "idle" | "big" | "compress" | "impact" | "done";
+
+/* ── Single clean shockwave ring at impact ── */
+function ImpactRing() {
+  return (
+    <motion.div
+      className="absolute rounded-full pointer-events-none"
+      style={{ width: 80, height: 80, border: "1px solid rgba(255,255,255,0.6)" }}
+      initial={{ scale: 0.5, opacity: 0.8 }}
+      animate={{ scale: 14, opacity: 0 }}
+      transition={{ duration: 0.9, ease: [0.05, 0, 0.2, 1] }}
+    />
+  );
+}
 
 export function HeroSection() {
   const [phase, setPhase] = useState<Phase>("idle");
 
   useEffect(() => {
     const t = [
-      setTimeout(() => setPhase("big"),      200),   // appear big
-      setTimeout(() => setPhase("compress"), 900),   // start press
-      setTimeout(() => setPhase("done"),     900 + PRESS_DURATION * 1000 + 200),
+      setTimeout(() => setPhase("big"),      200),
+      setTimeout(() => setPhase("compress"), 850),
+      setTimeout(() => setPhase("impact"),   850 + PRESS_MS),
+      setTimeout(() => setPhase("done"),     850 + PRESS_MS + 400),
     ];
     return () => t.forEach(clearTimeout);
   }, []);
 
-  const isCompressing = phase === "compress" || phase === "done";
+  const isCompressing = phase === "compress" || phase === "impact" || phase === "done";
 
   return (
     <section className="relative w-full h-screen -mt-16 bg-black overflow-hidden flex flex-col items-center justify-center">
 
+      {/* ── Shockwave ring — fires at impact ── */}
+      <AnimatePresence>
+        {phase === "impact" && <ImpactRing key="ring" />}
+      </AnimatePresence>
+
       {/* ── SQUEEZR ── */}
       <AnimatePresence>
-        {(phase === "big" || isCompressing || phase === "done") && (
+        {phase !== "idle" && (
           <motion.div
             key="text"
             className="flex items-baseline select-none"
             style={{ gap: "0.01em" }}
+
+            // appear big instantly
             initial={{ scale: 4.5, opacity: 0 }}
-            animate={{
-              scale:   isCompressing ? 1   : 4.5,
-              opacity: 1,
-            }}
+
+            animate={
+              phase === "big"
+                ? { scale: 4.5, opacity: 1, filter: "blur(0px)", x: 0 }
+                : isCompressing
+                  ? {
+                      // motion blur during, overcompress, bounce + shake at end
+                      scale:  [4.5, 4.5, 0.88, 1],
+                      filter: ["blur(0px)", "blur(0px)", "blur(5px)", "blur(0px)"],
+                      x:      [0, 0, 0, -6, 6, -3, 3, 0],
+                      opacity: 1,
+                    }
+                  : { scale: 4.5, opacity: 1, filter: "blur(0px)", x: 0 }
+            }
+
             transition={
               phase === "big"
-                ? { duration: 0.25, ease: "easeOut" }          // appear fast
-                : { duration: PRESS_DURATION, ease: PRESS_EASE } // press slow
+                ? { duration: 0.2, ease: "easeOut" }
+                : {
+                    duration: PRESS_MS / 1000,
+                    times:    [0, 0.08, 0.82, 1],     // hold big → compress → bounce
+                    ease:     "easeInOut",
+                    x: {
+                      duration: PRESS_MS / 1000,
+                      times: [0, 0.08, 0.82, 0.86, 0.90, 0.93, 0.97, 1],
+                      ease: "easeOut",
+                    },
+                  }
             }
           >
             {"SQUEEZR".split("").map((letter, i) => (
@@ -70,7 +109,7 @@ export function HeroSection() {
             className="font-mono text-neutral-500 tracking-[0.35em] uppercase text-xs mt-5"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 1.0, ease: "easeOut" }}
+            transition={{ delay: 0.3, duration: 1.1, ease: "easeOut" }}
           >
             compress · save · ship faster
           </motion.p>
@@ -85,7 +124,7 @@ export function HeroSection() {
             className="flex gap-3 mt-8"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.9, ease: [0.25, 0, 0.25, 1] }}
+            transition={{ delay: 0.8, duration: 0.9, ease: [0.25, 0, 0.25, 1] }}
           >
             <a
               href="/docs"
@@ -116,7 +155,7 @@ export function HeroSection() {
             className="absolute bottom-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.6, duration: 0.8 }}
+            transition={{ delay: 1.5, duration: 0.8 }}
           >
             <motion.div
               animate={{ y: [0, 7, 0] }}
