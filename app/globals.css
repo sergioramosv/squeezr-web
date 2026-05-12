@@ -35,14 +35,6 @@
   background: #0f0f0f;
 }
 
-/* Light mode overrides */
-:root:not(.dark) body { @apply bg-white text-neutral-800; }
-:root:not(.dark) .sec-hero { background: #fafafa; }
-:root:not(.dark) .sec-features { background: #f5f5f5; }
-:root:not(.dark) .sec-tools { background: #fafafa; }
-:root:not(.dark) .sec-pipeline { background: #f5f5f5; }
-:root:not(.dark) .sec-examples { background: #fafafa; }
-:root:not(.dark) .sec-cta { background: #f5f5f5; }
 
 /* ── Cards ── */
 .card-dark {
@@ -55,12 +47,6 @@
   box-shadow: 0 12px 40px rgba(0,0,0,0.3);
 }
 
-:root:not(.dark) .card-dark {
-  @apply bg-white border-neutral-200 shadow-sm;
-}
-:root:not(.dark) .card-dark:hover {
-  @apply border-neutral-300 shadow-lg;
-}
 
 /* ── Glow orbs ── */
 .orb {
@@ -90,11 +76,6 @@
   border: 1px solid #262626;
   box-shadow: 0 25px 80px rgba(0,0,0,0.5);
 }
-:root:not(.dark) .terminal {
-  background: #1a1a1a;
-  border-color: #333;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.15);
-}
 .terminal-bar {
   @apply flex items-center gap-2 px-4 py-3;
   background: #111111;
@@ -122,9 +103,6 @@
 .flow-card:hover {
   border-color: #404040;
   box-shadow: 0 0 30px rgba(0,0,0,0.2);
-}
-:root:not(.dark) .flow-card {
-  @apply bg-white border-neutral-200 shadow-sm;
 }
 
 /* ── Shimmer ── */

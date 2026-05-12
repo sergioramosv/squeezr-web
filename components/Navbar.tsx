@@ -1,6 +1,5 @@
 "use client";
 
-import { ThemeToggle } from "./ThemeToggle";
 import { useI18n } from "@/lib/i18n";
 import { Logo } from "./Logo";
 import { FiGlobe } from "react-icons/fi";
@@ -38,15 +37,13 @@ export function Navbar() {
           <Link href="/docs" className="px-3 py-1.5 text-sm text-neutral-600 dark:text-neutral-400 hover:text-green-700 dark:hover:text-green-500 rounded-lg hover:bg-neutral-100 dark:hover:bg-white/[0.04] transition-colors">{t.nav.docs}</Link>
           <a href="https://github.com/sergioramosv/Squeezr" target="_blank" rel="noopener" className="px-3 py-1.5 text-sm text-neutral-600 dark:text-neutral-400 hover:text-green-700 dark:hover:text-green-500 rounded-lg hover:bg-neutral-100 dark:hover:bg-white/[0.04] transition-colors">{t.nav.github}</a>
           <a href="https://www.npmjs.com/package/squeezr-ai" target="_blank" rel="noopener" className="px-3 py-1.5 text-sm text-neutral-600 dark:text-neutral-400 hover:text-green-700 dark:hover:text-green-500 rounded-lg hover:bg-neutral-100 dark:hover:bg-white/[0.04] transition-colors">{t.nav.npm}</a>
-          <div className="ml-2 pl-2 border-l border-neutral-200 dark:border-neutral-800 flex items-center gap-1">
+          <div className="ml-2 pl-2 border-l border-neutral-800 flex items-center gap-1">
             <LanguageToggle />
-            <ThemeToggle />
           </div>
         </div>
 
         <div className="flex items-center gap-2 md:hidden">
           <LanguageToggle />
-          <ThemeToggle />
           <button onClick={() => setOpen(!open)} className="p-2 text-neutral-500 rounded-lg hover:bg-neutral-100 dark:hover:bg-white/[0.04]">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {open

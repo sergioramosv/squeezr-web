@@ -113,6 +113,22 @@ function En() {
         that don&apos;t support localhost. The tunnel stays open until you press Ctrl+C or stop the proxy.
       </p>
 
+      <h2>squeezr bypass</h2>
+      <p>
+        Toggles bypass mode. When enabled, all requests pass through uncompressed but are
+        still logged for stats. Runtime-only &mdash; resets on proxy restart.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr bypass          # toggle bypass on/off
+squeezr bypass --on     # enable bypass (disable compression)
+squeezr bypass --off    # disable bypass (resume compression)`}</code>
+      </pre>
+      <p>
+        Use this when you suspect compression is affecting AI responses. The proxy continues
+        recording request counts and token sizes, so you can compare sessions with and without
+        compression active.
+      </p>
+
       <h2>squeezr discover</h2>
       <p>Detects which AI CLIs are installed on your system.</p>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
@@ -185,8 +201,16 @@ function En() {
             <td>Open a public tunnel to the local proxy</td>
           </tr>
           <tr>
+            <td><code>squeezr bypass</code></td>
+            <td>Toggle bypass mode (skip compression, keep logging)</td>
+          </tr>
+          <tr>
             <td><code>squeezr discover</code></td>
             <td>Detect installed AI CLIs</td>
+          </tr>
+          <tr>
+            <td><code>squeezr mcp install</code></td>
+            <td>Register MCP server in Claude Code, Cursor, Windsurf, Cline</td>
           </tr>
           <tr>
             <td><code>squeezr uninstall</code></td>
@@ -302,6 +326,18 @@ function Es() {
         que no soportan localhost. El túnel permanece abierto hasta que presiones Ctrl+C o detengas el proxy.
       </p>
 
+      <h2>squeezr bypass</h2>
+      <p>
+        Activa o desactiva el modo bypass. Cuando esta activado, las peticiones pasan sin
+        comprimir pero se siguen registrando en las estadisticas. Solo dura en runtime &mdash;
+        se reinicia al reiniciar el proxy.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`squeezr bypass          # alternar bypass
+squeezr bypass --on     # activar bypass (desactivar compresion)
+squeezr bypass --off    # desactivar bypass (reanudar compresion)`}</code>
+      </pre>
+
       <h2>squeezr discover</h2>
       <p>Detecta qué CLIs de IA están instalados en tu sistema.</p>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
@@ -374,8 +410,16 @@ function Es() {
             <td>Abrir un túnel público al proxy local</td>
           </tr>
           <tr>
+            <td><code>squeezr bypass</code></td>
+            <td>Alternar modo bypass (desactivar compresion, mantener logging)</td>
+          </tr>
+          <tr>
             <td><code>squeezr discover</code></td>
             <td>Detectar CLIs de IA instalados</td>
+          </tr>
+          <tr>
+            <td><code>squeezr mcp install</code></td>
+            <td>Registrar servidor MCP en Claude Code, Cursor, Windsurf, Cline</td>
           </tr>
           <tr>
             <td><code>squeezr uninstall</code></td>

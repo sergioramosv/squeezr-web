@@ -26,7 +26,8 @@ function En() {
 
       <h3>GET /squeezr/health</h3>
       <p>
-        Health check endpoint. Returns a 200 status when the proxy is running.
+        Enhanced health check endpoint. Returns proxy status, circuit breaker state, bypass mode,
+        compression mode, and expand store pressure.
       </p>
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
         <code>{`curl http://localhost:8080/squeezr/health`}</code>
@@ -35,8 +36,24 @@ function En() {
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
         <code>{`{
   "status": "ok",
-  "version": "1.21.0",
-  "uptime": 7351
+  "version": "1.22.0",
+  "uptime_seconds": 7351,
+  "mode": "normal",
+  "bypassed": false,
+  "circuit_breaker": {
+    "state": "closed",
+    "consecutive_failures": 0,
+    "total_trips": 0,
+    "last_success_ago_s": 12
+  },
+  "expand_store": {
+    "size": 42,
+    "pressure": "low"
+  },
+  "compression": {
+    "requests": 156,
+    "savings_pct": 34.2
+  }
 }`}</code>
       </pre>
 
@@ -97,6 +114,39 @@ function En() {
         Events include: <code>compression</code> (each compressed request), <code>stats</code>{" "}
         (periodic stats updates), and <code>session</code> (session start/end).
       </p>
+
+      <h3>GET /squeezr/bypass</h3>
+      <p>
+        Returns the current bypass mode state.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`curl http://localhost:8080/squeezr/bypass
+# => { "bypassed": false }`}</code>
+      </pre>
+
+      <h3>POST /squeezr/bypass</h3>
+      <p>
+        Toggles or sets bypass mode. Send <code>{`{"enabled": true}`}</code> to enable,{" "}
+        <code>{`{"enabled": false}`}</code> to disable, or an empty body to toggle.
+        Runtime-only &mdash; resets on proxy restart.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`curl -X POST http://localhost:8080/squeezr/bypass \\
+  -H 'content-type: application/json' \\
+  -d '{"enabled": true}'
+# => { "bypassed": true }`}</code>
+      </pre>
+
+      <h3>POST /squeezr/config</h3>
+      <p>
+        Changes the compression mode at runtime without restart.
+      </p>
+      <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+        <code>{`curl -X POST http://localhost:8080/squeezr/config \\
+  -H 'content-type: application/json' \\
+  -d '{"mode": "aggressive"}'
+# => { "ok": true, "mode": "aggressive" }`}</code>
+      </pre>
 
       <h2>Proxy behavior</h2>
       <p>
@@ -195,8 +245,17 @@ function Es() {
       <pre className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 font-mono text-sm overflow-x-auto">
         <code>{`{
   "status": "ok",
-  "version": "1.21.0",
-  "uptime": 7351
+  "version": "1.22.0",
+  "uptime_seconds": 7351,
+  "mode": "normal",
+  "bypassed": false,
+  "circuit_breaker": {
+    "state": "closed",
+    "consecutive_failures": 0,
+    "total_trips": 0
+  },
+  "expand_store": { "size": 42, "pressure": "low" },
+  "compression": { "requests": 156, "savings_pct": 34.2 }
 }`}</code>
       </pre>
 

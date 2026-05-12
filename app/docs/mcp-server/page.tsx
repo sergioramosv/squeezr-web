@@ -24,7 +24,7 @@ function En() {
 
       <h2>Available tools</h2>
       <p>
-        The MCP server provides 9 tools. Each tool is callable by the AI agent during a session.
+        The MCP server provides 10 tools. Each tool is callable by the AI agent during a session.
       </p>
 
       <h3>squeezr_status</h3>
@@ -84,7 +84,7 @@ function En() {
           <tr>
             <td><code>mode</code></td>
             <td><code>string</code></td>
-            <td>One of: <code>&quot;full&quot;</code>, <code>&quot;light&quot;</code>, <code>&quot;aggressive&quot;</code>, <code>&quot;off&quot;</code></td>
+            <td>One of: <code>&quot;soft&quot;</code>, <code>&quot;normal&quot;</code>, <code>&quot;aggressive&quot;</code>, <code>&quot;critical&quot;</code></td>
           </tr>
         </tbody>
       </table>
@@ -203,9 +203,32 @@ function En() {
         </thead>
         <tbody>
           <tr>
-            <td><code>path</code></td>
+            <td><code>project</code></td>
             <td><code>string</code></td>
-            <td>Absolute path to the project directory</td>
+            <td>Project name to set, or empty string to clear and use auto-detection</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>squeezr_bypass</h3>
+      <p>
+        Toggles bypass mode on or off. When bypass is ON, all requests pass through uncompressed
+        but are still logged for stats. Runtime-only &mdash; resets on proxy restart, does not
+        modify config files. Use when you suspect compression is affecting results.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>enabled</code></td>
+            <td><code>boolean</code> (optional)</td>
+            <td><code>true</code> to enable bypass, <code>false</code> to disable. Omit to toggle.</td>
           </tr>
         </tbody>
       </table>
@@ -226,6 +249,7 @@ function En() {
         <li>Call <code>squeezr_check_updates</code> to see if a new version is available</li>
         <li>Call <code>squeezr_habits</code> to suggest workflow optimizations</li>
         <li>Call <code>squeezr_set_project</code> when switching between repositories</li>
+        <li>Call <code>squeezr_bypass</code> to temporarily disable compression for debugging</li>
       </ul>
     </>
   );
@@ -242,7 +266,7 @@ function Es() {
 
       <h2>Herramientas disponibles</h2>
       <p>
-        El servidor MCP proporciona 9 herramientas. Cada herramienta es invocable por el agente IA
+        El servidor MCP proporciona 10 herramientas. Cada herramienta es invocable por el agente IA
         durante una sesion.
       </p>
 
@@ -303,7 +327,7 @@ function Es() {
           <tr>
             <td><code>mode</code></td>
             <td><code>string</code></td>
-            <td>Uno de: <code>&quot;full&quot;</code>, <code>&quot;light&quot;</code>, <code>&quot;aggressive&quot;</code>, <code>&quot;off&quot;</code></td>
+            <td>Uno de: <code>&quot;soft&quot;</code>, <code>&quot;normal&quot;</code>, <code>&quot;aggressive&quot;</code>, <code>&quot;critical&quot;</code></td>
           </tr>
         </tbody>
       </table>
@@ -422,9 +446,32 @@ function Es() {
         </thead>
         <tbody>
           <tr>
-            <td><code>path</code></td>
+            <td><code>project</code></td>
             <td><code>string</code></td>
-            <td>Ruta absoluta al directorio del proyecto</td>
+            <td>Nombre del proyecto, o cadena vacia para limpiar y usar auto-deteccion</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>squeezr_bypass</h3>
+      <p>
+        Activa o desactiva el modo bypass. Cuando esta activado, todas las peticiones pasan sin comprimir
+        pero se siguen registrando en las estadisticas. Solo dura en runtime &mdash; se reinicia al
+        reiniciar el proxy, no modifica archivos de configuracion.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Parametro</th>
+            <th>Tipo</th>
+            <th>Descripcion</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>enabled</code></td>
+            <td><code>boolean</code> (opcional)</td>
+            <td><code>true</code> para activar bypass, <code>false</code> para desactivar. Omitir para alternar.</td>
           </tr>
         </tbody>
       </table>
@@ -445,6 +492,7 @@ function Es() {
         <li>Llamar a <code>squeezr_check_updates</code> para ver si hay una nueva version disponible</li>
         <li>Llamar a <code>squeezr_habits</code> para sugerir optimizaciones de flujo de trabajo</li>
         <li>Llamar a <code>squeezr_set_project</code> al cambiar entre repositorios</li>
+        <li>Llamar a <code>squeezr_bypass</code> para desactivar temporalmente la compresion y depurar</li>
       </ul>
     </>
   );

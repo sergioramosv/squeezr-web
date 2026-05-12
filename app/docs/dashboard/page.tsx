@@ -40,9 +40,19 @@ function En() {
       <h3>Overview</h3>
       <p>
         The landing page shows a high-level summary of your current session: total requests proxied,
-        tokens saved, compression ratio, cache hit rate, and uptime. A live activity feed shows
-        compression events as they happen.
+        tokens saved, compression ratio, cost saved, per-tool breakdown, sparkline chart, context
+        pressure bars, active project badge, and savings breakdown (deterministic, AI, dedup,
+        system prompt, overhead).
       </p>
+      <p>
+        Additionally, the overview displays <strong>resilience indicators</strong>:
+      </p>
+      <ul>
+        <li><strong>Compression latency</strong> &mdash; p50/p95 in milliseconds per request, with sample count and average.</li>
+        <li><strong>Expand rate</strong> &mdash; percentage of compressions where the model requested the original content back. Color-coded: green (&lt;10%), yellow (10-25%), red (&gt;25%). High expand rate means compression is too aggressive.</li>
+        <li><strong>Circuit breaker indicator</strong> &mdash; in the sidebar, shows whether the AI compression backend is healthy (green), probing (yellow), or down (red).</li>
+        <li><strong>Bypass toggle</strong> &mdash; in the sidebar, click to instantly disable all compression without restart. The toggle stays synced via SSE.</li>
+      </ul>
 
       <h3>Projects</h3>
       <p>
@@ -112,10 +122,20 @@ function Es() {
 
       <h3>Overview</h3>
       <p>
-        La pagina principal muestra un resumen de alto nivel de tu sesion actual: total de peticiones
-        proxiadas, tokens ahorrados, ratio de compresion, tasa de aciertos de cache y tiempo de
-        actividad. Un feed de actividad en vivo muestra los eventos de compresion mientras ocurren.
+        La pagina principal muestra un resumen de alto nivel de tu sesion actual: peticiones,
+        tokens ahorrados, ratio de compresion, coste ahorrado, desglose por herramienta, sparkline,
+        barras de presion de contexto, badge de proyecto activo, y desglose de ahorros (deterministico,
+        IA, dedup, system prompt, overhead).
       </p>
+      <p>
+        Ademas, muestra <strong>indicadores de resiliencia</strong>:
+      </p>
+      <ul>
+        <li><strong>Latencia de compresion</strong> &mdash; p50/p95 en milisegundos por peticion.</li>
+        <li><strong>Tasa de expand</strong> &mdash; porcentaje de compresiones donde el modelo pidio el contenido original. Codificado por color: verde (&lt;10%), amarillo (10-25%), rojo (&gt;25%).</li>
+        <li><strong>Indicador de circuit breaker</strong> &mdash; en el sidebar, muestra si el backend de compresion IA esta sano (verde), probando (amarillo), o caido (rojo).</li>
+        <li><strong>Toggle de bypass</strong> &mdash; en el sidebar, clic para desactivar toda la compresion sin reiniciar.</li>
+      </ul>
 
       <h3>Projects</h3>
       <p>
