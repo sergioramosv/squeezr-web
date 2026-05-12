@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-/* ─── Token pool ─────────────────────────────────────────── */
+/* ─── Tokens ─────────────────────────────────────────────── */
 const TOKEN_POOL = [
   "const messages", "system_prompt", "token_count", "compress()",
   "84% saved", "context_window", "async/await", "14,203 tokens",
@@ -28,83 +28,85 @@ function makeToken(i: number) {
     y:       Math.sin(angle) * dist * 0.62,
     size:    rnd(10, 15),
     delay:   rnd(0, 0.6),
-    opacity: rnd(0.18, 0.45),
+    opacity: rnd(0.2, 0.5),
     rotate:  rnd(-18, 18),
   };
 }
 
-/* ─── Flash particles (circular burst, no cross) ─────────── */
-const BURST_COUNT = 32;
-
-function makeBurstParticle(i: number) {
-  const angle = (i / BURST_COUNT) * Math.PI * 2 + rnd(-0.1, 0.1);
-  const dist  = rnd(160, 360);
-  return {
-    id:    i,
-    tx:    Math.cos(angle) * dist,
-    ty:    Math.sin(angle) * dist,
-    size:  i % 4 === 0 ? 4 : i % 3 === 0 ? 3 : 2,
-    dur:   rnd(0.45, 0.75),
-    color: i % 5 === 0 ? "rgba(34,197,94,0.9)" : "rgba(255,255,255,0.85)",
-  };
-}
-
-const BURST_PARTICLES = Array.from({ length: BURST_COUNT }, (_, i) => makeBurstParticle(i));
+/* ─── Star flash ─────────────────────────────────────────── */
+// 4-pointed smooth star path (lens-flare style, not a cross)
+const STAR_PATH = "M 50 0 C 50 28 72 50 100 50 C 72 50 50 72 50 100 C 50 72 28 50 0 50 C 28 50 50 28 50 0 Z";
 
 function FlashEffect() {
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
 
-      {/* Core — bright dot that blooms */}
+      {/* Glow behind the star */}
       <motion.div
         className="absolute rounded-full"
         style={{
-          width: 8, height: 8,
-          background: "radial-gradient(circle, #fff 30%, rgba(34,197,94,0.8) 70%, transparent 100%)",
+          width: 20, height: 20,
+          background: "radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(34,197,94,0.5) 40%, transparent 75%)",
+          filter: "blur(8px)",
         }}
         initial={{ scale: 1, opacity: 1 }}
-        animate={{ scale: 50, opacity: 0 }}
-        transition={{ duration: 0.4, ease: [0.1, 0, 0.2, 1] }}
+        animate={{ scale: 30, opacity: 0 }}
+        transition={{ duration: 0.6, ease: [0.1, 0, 0.3, 1] }}
       />
 
-      {/* Ring 1 — tight, fast */}
-      <motion.div
-        className="absolute rounded-full"
-        style={{ width: 12, height: 12, border: "2px solid rgba(255,255,255,0.95)" }}
-        initial={{ scale: 0.5, opacity: 1 }}
-        animate={{ scale: 60, opacity: 0 }}
-        transition={{ duration: 0.5, ease: [0.05, 0, 0.15, 1], delay: 0.02 }}
-      />
-
-      {/* Ring 2 — medium */}
-      <motion.div
-        className="absolute rounded-full"
-        style={{ width: 12, height: 12, border: "1.5px solid rgba(34,197,94,0.6)" }}
-        initial={{ scale: 0.5, opacity: 0.9 }}
-        animate={{ scale: 110, opacity: 0 }}
-        transition={{ duration: 0.75, ease: [0.05, 0, 0.2, 1], delay: 0.07 }}
-      />
-
-      {/* Ring 3 — wide, slow */}
-      <motion.div
-        className="absolute rounded-full"
-        style={{ width: 12, height: 12, border: "1px solid rgba(255,255,255,0.25)" }}
-        initial={{ scale: 0.5, opacity: 0.6 }}
-        animate={{ scale: 180, opacity: 0 }}
-        transition={{ duration: 1.1, ease: [0.05, 0, 0.25, 1], delay: 0.12 }}
-      />
-
-      {/* Circular particle burst — no cross, no rays */}
-      {BURST_PARTICLES.map(p => (
-        <motion.div
-          key={p.id}
-          className="absolute rounded-full"
-          style={{ width: p.size, height: p.size, background: p.color }}
-          initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
-          animate={{ x: p.tx, y: p.ty, opacity: 0, scale: 0 }}
-          transition={{ duration: p.dur, ease: [0.2, 0, 0.5, 1], delay: 0.04 }}
+      {/* The star ✦ */}
+      <motion.svg
+        viewBox="0 0 100 100"
+        className="absolute"
+        style={{ width: 120, height: 120, overflow: "visible" }}
+        initial={{ scale: 0, opacity: 1, rotate: 0 }}
+        animate={{ scale: 4.5, opacity: 0, rotate: 15 }}
+        transition={{ duration: 0.55, ease: [0.05, 0, 0.2, 1] }}
+      >
+        <defs>
+          <filter id="star-glow">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
+        {/* Outer star — bright white */}
+        <path d={STAR_PATH} fill="white" filter="url(#star-glow)" />
+        {/* Inner core — tighter, brighter */}
+        <path
+          d="M 50 20 C 50 38 62 50 80 50 C 62 50 50 62 50 80 C 50 62 38 50 20 50 C 38 50 50 38 50 20 Z"
+          fill="white"
         />
-      ))}
+      </motion.svg>
+
+      {/* Second smaller star, rotated 45° (makes it 8-pointed when combined) */}
+      <motion.svg
+        viewBox="0 0 100 100"
+        className="absolute"
+        style={{ width: 120, height: 120, overflow: "visible" }}
+        initial={{ scale: 0, opacity: 0.6, rotate: 45 }}
+        animate={{ scale: 3, opacity: 0, rotate: 60 }}
+        transition={{ duration: 0.6, ease: [0.05, 0, 0.25, 1], delay: 0.04 }}
+      >
+        <path d={STAR_PATH} fill="rgba(34,197,94,0.8)" />
+      </motion.svg>
+
+      {/* Shockwave ring 1 */}
+      <motion.div
+        className="absolute rounded-full"
+        style={{ width: 14, height: 14, border: "1.5px solid rgba(255,255,255,0.9)" }}
+        initial={{ scale: 0.5, opacity: 1 }}
+        animate={{ scale: 70, opacity: 0 }}
+        transition={{ duration: 0.6, ease: [0.05, 0, 0.15, 1], delay: 0.05 }}
+      />
+
+      {/* Shockwave ring 2 */}
+      <motion.div
+        className="absolute rounded-full"
+        style={{ width: 14, height: 14, border: "1px solid rgba(34,197,94,0.5)" }}
+        initial={{ scale: 0.5, opacity: 0.8 }}
+        animate={{ scale: 130, opacity: 0 }}
+        transition={{ duration: 0.9, ease: [0.05, 0, 0.2, 1], delay: 0.1 }}
+      />
 
     </div>
   );
@@ -124,8 +126,8 @@ export function HeroSection() {
       setTimeout(() => setPhase("scatter"),  120),
       setTimeout(() => setPhase("compress"), 1900),
       setTimeout(() => setPhase("flash"),    2750),
-      setTimeout(() => setPhase("reveal"),   3000),
-      setTimeout(() => setPhase("done"),     4800),
+      setTimeout(() => setPhase("reveal"),   3050),
+      setTimeout(() => setPhase("done"),     5200),   // more time before tagline
     ];
     return () => t.forEach(clearTimeout);
   }, []);
@@ -133,21 +135,14 @@ export function HeroSection() {
   function tokenAnimate(tk: ReturnType<typeof makeToken>) {
     if (phase === "idle")
       return { x: 0, y: 0, opacity: 0, scale: 0, rotate: 0 };
-
     if (phase === "scatter")
       return {
         x: tk.x, y: tk.y,
-        opacity: tk.opacity,
-        scale: 1,
-        rotate: tk.rotate,
+        opacity: tk.opacity, scale: 1, rotate: tk.rotate,
         transition: { duration: 1.0, delay: tk.delay, ease: [0.15, 0, 0.35, 1] },
       };
-
     return {
-      x: 0, y: 0,
-      opacity: 0,
-      scale: 0,
-      rotate: 0,
+      x: 0, y: 0, opacity: 0, scale: 0, rotate: 0,
       transition: { duration: 0.55, ease: [0.75, 0, 1, 1] },
     };
   }
@@ -155,7 +150,7 @@ export function HeroSection() {
   return (
     <section className="relative w-full h-screen -mt-16 bg-black overflow-hidden flex flex-col items-center justify-center">
 
-      {/* ── Token field — monochrome green ── */}
+      {/* Tokens */}
       {tokens.map(tk => (
         <motion.div
           key={tk.id}
@@ -168,12 +163,12 @@ export function HeroSection() {
         </motion.div>
       ))}
 
-      {/* ── Flash ── */}
+      {/* Flash */}
       <AnimatePresence>
         {phase === "flash" && <FlashEffect key="flash" />}
       </AnimatePresence>
 
-      {/* ── SQUEEZR ── */}
+      {/* SQUEEZR */}
       {(phase === "reveal" || phase === "done") && (
         <div className="flex items-baseline select-none" style={{ gap: "0.01em" }}>
           {LETTERS.map((letter, i) => (
@@ -189,10 +184,8 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 55, scale: 0.4, filter: "blur(10px)" }}
               animate={{ opacity: 1, y: 0,  scale: 1,   filter: "blur(0px)" }}
               transition={{
-                delay:     i * 0.055,
-                type:      "spring",
-                stiffness: 380,
-                damping:   22,
+                delay: i * 0.055,
+                type: "spring", stiffness: 380, damping: 22,
               }}
             >
               {letter}
@@ -201,30 +194,30 @@ export function HeroSection() {
         </div>
       )}
 
-      {/* ── Tagline ── */}
+      {/* Tagline — aparece suavemente, sin brusquedad */}
       <AnimatePresence>
         {phase === "done" && (
           <motion.p
             key="tagline"
-            className="font-mono text-neutral-500 tracking-[0.35em] uppercase text-xs mt-5"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.7 }}
+            className="font-mono text-neutral-500 tracking-[0.35em] uppercase text-xs mt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 1.2, ease: "easeOut" }}
           >
             compress · save · ship faster
           </motion.p>
         )}
       </AnimatePresence>
 
-      {/* ── CTAs ── */}
+      {/* CTAs — entran desde abajo muy suavemente */}
       <AnimatePresence>
         {phase === "done" && (
           <motion.div
             key="cta"
-            className="flex gap-3 mt-10"
-            initial={{ opacity: 0, y: 14 }}
+            className="flex gap-3 mt-8"
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
+            transition={{ delay: 0.7, duration: 1.0, ease: [0.25, 0, 0.25, 1] }}
           >
             <a
               href="/docs"
@@ -247,7 +240,7 @@ export function HeroSection() {
         )}
       </AnimatePresence>
 
-      {/* ── Scroll indicator ── */}
+      {/* Scroll indicator */}
       <AnimatePresence>
         {phase === "done" && (
           <motion.div
@@ -255,7 +248,7 @@ export function HeroSection() {
             className="absolute bottom-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.3 }}
+            transition={{ delay: 1.4, duration: 0.8 }}
           >
             <motion.div
               animate={{ y: [0, 7, 0] }}
