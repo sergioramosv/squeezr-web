@@ -189,11 +189,14 @@ export function HeroSection() {
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5, duration: 0.8 }}
           >
-            <motion.div
-              animate={{ y: [0, 7, 0] }}
-              transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-              className="w-px h-10 bg-gradient-to-b from-white/30 to-transparent"
-            />
+            {/* Mouse icon */}
+            <div className="w-6 h-10 rounded-full border-2 border-white/25 flex justify-center pt-2">
+              <motion.div
+                className="w-1 h-2 rounded-full bg-white/50"
+                animate={{ y: [0, 10, 0], opacity: [1, 0.2, 1] }}
+                transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
