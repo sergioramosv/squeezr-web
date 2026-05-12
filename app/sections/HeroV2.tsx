@@ -3,68 +3,102 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-type Phase = "idle" | "compress" | "done";
+type Phase = "idle" | "big" | "compress" | "done";
 
-const LETTERS = ["S", "Q", "U", "E", "E", "Z", "R"];
-const CENTER  = (LETTERS.length - 1) / 2; // 3
-
-// How far each letter starts from its final position (px)
-// Outermost letters travel the most — innermost barely move
-function spreadX(i: number) {
-  return (i - CENTER) * 320;
-}
+// Ease that feels like a hydraulic press:
+// starts with controlled force, slows as resistance builds
+const PRESS_EASE = [0.4, 0, 0.2, 1] as const;
+const PRESS_DURATION = 1.6;
 
 export function HeroSection() {
   const [phase, setPhase] = useState<Phase>("idle");
 
   useEffect(() => {
     const t = [
-      setTimeout(() => setPhase("compress"), 300),
-      setTimeout(() => setPhase("done"),     1800),
+      setTimeout(() => setPhase("big"),      200),   // appear big
+      setTimeout(() => setPhase("compress"), 900),   // start press
+      setTimeout(() => setPhase("done"),     900 + PRESS_DURATION * 1000 + 200),
     ];
     return () => t.forEach(clearTimeout);
   }, []);
 
+  const isCompressing = phase === "compress" || phase === "done";
+
   return (
     <section className="relative w-full h-screen -mt-16 bg-black overflow-hidden flex flex-col items-center justify-center">
 
-      {/* ── SQUEEZR — letters compress inward ── */}
-      <div className="flex items-baseline select-none" style={{ gap: "0.01em" }}>
-        {LETTERS.map((letter, i) => (
-          <motion.span
-            key={i}
-            className="font-black text-white"
-            style={{
-              fontSize:      "clamp(3.5rem, 13vw, 11rem)",
-              lineHeight:    1,
-              letterSpacing: "-0.035em",
+      {/* ── Press bar — TOP ── */}
+      <AnimatePresence>
+        {(phase === "big" || isCompressing) && (
+          <motion.div
+            key="bar-top"
+            className="absolute left-0 right-0 pointer-events-none"
+            style={{ height: 2, background: "rgba(255,255,255,0.55)" }}
+            initial={{ top: "calc(50% - 28vh)" }}
+            animate={{ top: isCompressing ? "calc(50% - 5.5vh)" : "calc(50% - 28vh)" }}
+            transition={{ duration: PRESS_DURATION, ease: PRESS_EASE }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Press bar — BOTTOM ── */}
+      <AnimatePresence>
+        {(phase === "big" || isCompressing) && (
+          <motion.div
+            key="bar-bottom"
+            className="absolute left-0 right-0 pointer-events-none"
+            style={{ height: 2, background: "rgba(255,255,255,0.55)" }}
+            initial={{ top: "calc(50% + 28vh)" }}
+            animate={{ top: isCompressing ? "calc(50% + 5.5vh)" : "calc(50% + 28vh)" }}
+            transition={{ duration: PRESS_DURATION, ease: PRESS_EASE }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── SQUEEZR ── */}
+      <AnimatePresence>
+        {(phase === "big" || isCompressing || phase === "done") && (
+          <motion.div
+            key="text"
+            className="flex items-baseline select-none"
+            style={{ gap: "0.01em" }}
+            initial={{ scale: 4.5, opacity: 0 }}
+            animate={{
+              scale:   isCompressing ? 1   : 4.5,
+              opacity: 1,
             }}
-            initial={{ x: spreadX(i), opacity: 0 }}
-            animate={
-              phase === "idle"
-                ? { x: spreadX(i), opacity: 0 }
-                : { x: 0, opacity: 1 }
+            transition={
+              phase === "big"
+                ? { duration: 0.25, ease: "easeOut" }          // appear fast
+                : { duration: PRESS_DURATION, ease: PRESS_EASE } // press slow
             }
-            transition={{
-              duration: 0.65,
-              ease: [0.32, 0, 0.1, 1], // slow start → sharp deceleration = pressure feel
-              opacity: { duration: 0.15 },
-            }}
           >
-            {letter}
-          </motion.span>
-        ))}
-      </div>
+            {"SQUEEZR".split("").map((letter, i) => (
+              <span
+                key={i}
+                className="font-black text-white"
+                style={{
+                  fontSize:      "clamp(2.8rem, 8vw, 7rem)",
+                  lineHeight:    1,
+                  letterSpacing: "-0.03em",
+                }}
+              >
+                {letter}
+              </span>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Tagline ── */}
       <AnimatePresence>
         {phase === "done" && (
           <motion.p
             key="tagline"
-            className="font-mono text-neutral-500 tracking-[0.35em] uppercase text-xs mt-6"
+            className="font-mono text-neutral-500 tracking-[0.35em] uppercase text-xs mt-5"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 1.2, ease: "easeOut" }}
+            transition={{ delay: 0.4, duration: 1.0, ease: "easeOut" }}
           >
             compress · save · ship faster
           </motion.p>
@@ -79,7 +113,7 @@ export function HeroSection() {
             className="flex gap-3 mt-8"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 1.0, ease: [0.25, 0, 0.25, 1] }}
+            transition={{ delay: 0.9, duration: 0.9, ease: [0.25, 0, 0.25, 1] }}
           >
             <a
               href="/docs"
@@ -110,7 +144,7 @@ export function HeroSection() {
             className="absolute bottom-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 0.8 }}
+            transition={{ delay: 1.6, duration: 0.8 }}
           >
             <motion.div
               animate={{ y: [0, 7, 0] }}
