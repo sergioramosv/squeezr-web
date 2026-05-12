@@ -1,153 +1,218 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { GridBackground } from "@/components/GridBackground";
-import { TypingTerminal } from "@/components/Terminal";
-import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { useI18n } from "@/lib/i18n";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-const terminalLines = [
-  { prompt: "$", command: "npm install -g squeezr-ai", delay: 400 },
-  { output: "added 1 package in 3.2s", delay: 100 },
-  { prompt: "$", command: "squeezr setup", delay: 400 },
-  { output: "✓ Environment configured", outputColor: "text-green-600", delay: 200 },
-  { output: "✓ Proxy started on :8080", outputColor: "text-green-600", delay: 200 },
-  { output: "✓ TLS certificates generated", outputColor: "text-green-600", delay: 200 },
-  { prompt: "$", command: "claude", delay: 600 },
-  { output: "✓ Squeezr active — compressing...", outputColor: "text-green-600", delay: 300 },
-  { output: "", delay: 100 },
+/* ─── Token data ─────────────────────────────────────────── */
+const TOKENS = [
+  "const", "messages", "=>", "{}", "system_prompt", "tokens",
+  "compress", "async", "await", "context", "14k→2k", "✓",
+  "proxy", "stream", "cache", "84%", "claude", ":8080",
+  "chunk", "dedupe", "window", "buffer", "import", "export",
+  "llm", "gpt-4o", "gemini", "ollama", "ANTHROPIC_KEY", "→",
+  "truncate", "merge", "91%", "72%", "0x4f2a", "&&",
+  "token_count", "usage", "minify", "<<EOF", "return", "??",
+  "localhost", "BASE_URL", "aider", "codex", "[...msgs]", "{}",
+  "role:", "content:", "max_tokens", "stop_seq", "top_p", "temp",
 ];
 
-const compressionSteps = [
-  { label: "vitest run", original: "2,340 chars", compressed: "198 chars", pct: 92 },
-  { label: "cat server.ts", original: "3,200 lines", compressed: "84 chars", pct: 97 },
-  { label: "git diff", original: "1,800 chars", compressed: "320 chars", pct: 82 },
+const COLORS = [
+  "#22c55e", "#3b82f6", "#a855f7", "#f97316",
+  "#06b6d4", "#facc15", "#ec4899", "#6366f1",
+  "#34d399", "#60a5fa", "#c084fc", "#fb923c",
 ];
 
-function CompressionTicker() {
-  return (
-    <div className="space-y-2">
-      {compressionSteps.map((s, i) => (
-        <motion.div
-          key={s.label}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 3.5 + i * 0.6, duration: 0.4 }}
-          className="flex items-center justify-between text-xs font-mono px-3 py-2 rounded-lg bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800"
-        >
-          <span className="text-neutral-500">{s.label}</span>
-          <div className="flex items-center gap-2">
-            <span className="text-neutral-400 dark:text-neutral-600 line-through">{s.original}</span>
-            <span className="text-green-700 dark:text-green-500 font-bold">{s.compressed}</span>
-            <span className="text-[10px] font-bold text-white bg-green-700 dark:bg-green-600 px-1.5 py-0.5 rounded">
-              -{s.pct}%
-            </span>
-          </div>
-        </motion.div>
-      ))}
-    </div>
-  );
+function rnd(a: number, b: number) { return a + Math.random() * (b - a); }
+
+function makeToken(i: number) {
+  // Spread tokens in a wide circle around center
+  const angle = (i / 54) * Math.PI * 2 + rnd(-0.15, 0.15);
+  const dist   = rnd(200, 480);
+  return {
+    id:       i,
+    text:     TOKENS[i % TOKENS.length],
+    color:    COLORS[i % COLORS.length],
+    sx:       Math.cos(angle) * dist,              // scatter x
+    sy:       Math.sin(angle) * dist * 0.65,       // scatter y (flatter ellipse)
+    size:     rnd(10, 17),
+    delay:    rnd(0, 0.55),
+    rotate:   rnd(-25, 25),
+    opacity:  rnd(0.55, 0.9),
+  };
 }
 
+/* ─── Letter data ────────────────────────────────────────── */
+const LETTERS = ["S", "Q", "U", "E", "E", "Z", "R"];
+
+/* ─── Phase type ─────────────────────────────────────────── */
+type Phase = "idle" | "scatter" | "compress" | "flash" | "reveal" | "done";
+
+/* ─── Component ──────────────────────────────────────────── */
 export function HeroSection() {
-  const { t } = useI18n();
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [tokens]          = useState(() => Array.from({ length: 54 }, (_, i) => makeToken(i)));
+
+  useEffect(() => {
+    const t = [
+      setTimeout(() => setPhase("scatter"),  120),
+      setTimeout(() => setPhase("compress"), 1900),
+      setTimeout(() => setPhase("flash"),    2750),
+      setTimeout(() => setPhase("reveal"),   3050),
+      setTimeout(() => setPhase("done"),     4800),
+    ];
+    return () => t.forEach(clearTimeout);
+  }, []);
+
+  /* Token animation per phase */
+  function tokenAnimate(tk: ReturnType<typeof makeToken>) {
+    if (phase === "idle")
+      return { x: 0, y: 0, opacity: 0, scale: 0, rotate: 0 };
+
+    if (phase === "scatter")
+      return {
+        x: tk.sx, y: tk.sy,
+        opacity: tk.opacity,
+        scale: 1,
+        rotate: tk.rotate,
+        transition: { duration: 1.0, delay: tk.delay, ease: [0.15, 0, 0.35, 1] },
+      };
+
+    // compress → flash → reveal → done
+    return {
+      x: 0, y: 0,
+      opacity: 0,
+      scale: 0,
+      rotate: 0,
+      transition: { duration: 0.55, ease: [0.7, 0, 1, 1] },
+    };
+  }
 
   return (
-    <section className="relative overflow-hidden min-h-screen flex items-center bg-neutral-50 dark:bg-[#0a0a0a]">
-      <GridBackground />
+    <section className="relative w-full h-screen -mt-16 bg-black overflow-hidden flex flex-col items-center justify-center">
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 py-28 md:py-36 w-full">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 rounded-full border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800/50"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-green-600" />
-              <span className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">{t.hero.badge}</span>
-            </motion.div>
+      {/* ── Tokens ── */}
+      {tokens.map(tk => (
+        <motion.div
+          key={tk.id}
+          className="absolute font-mono font-bold pointer-events-none select-none whitespace-nowrap"
+          style={{ color: tk.color, fontSize: tk.size }}
+          initial={{ x: 0, y: 0, opacity: 0, scale: 0 }}
+          animate={tokenAnimate(tk)}
+        >
+          {tk.text}
+        </motion.div>
+      ))}
 
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08] mb-6"
-            >
-              <span className="text-neutral-900 dark:text-white">{t.hero.title1}</span>
-              <br />
-              <span className="text-green-700 dark:text-green-500">{t.hero.title2}</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg text-neutral-500 dark:text-neutral-400 mb-8 leading-relaxed max-w-lg"
-            >
-              {t.hero.desc}{" "}
-              <span className="text-neutral-800 dark:text-neutral-200 font-medium">{t.hero.descHighlight}</span>{" "}
-              {t.hero.descEnd}
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-wrap gap-3 mb-12"
-            >
-              <Link
-                href="/docs"
-                className="group px-7 py-3.5 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl transition-all text-sm flex items-center gap-2 hover:-translate-y-0.5"
-              >
-                {t.hero.cta}
-                <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-              </Link>
-              <a
-                href="https://github.com/sergioramosv/Squeezr"
-                className="group px-7 py-3.5 bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-900 dark:text-white border border-neutral-300 dark:border-neutral-700 font-semibold rounded-xl transition-all hover:-translate-y-0.5 text-sm flex items-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
-                GitHub
-              </a>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className="flex gap-10"
-            >
-              <div>
-                <AnimatedCounter target={30} suffix="+" className="text-3xl font-extrabold text-neutral-900 dark:text-white" />
-                <div className="text-neutral-500 text-xs mt-1">{t.hero.stats.patterns}</div>
-              </div>
-              <div className="w-px bg-neutral-200 dark:bg-neutral-800" />
-              <div>
-                <AnimatedCounter target={7} className="text-3xl font-extrabold text-neutral-900 dark:text-white" />
-                <div className="text-neutral-500 text-xs mt-1">{t.hero.stats.layers}</div>
-              </div>
-              <div className="w-px bg-neutral-200 dark:bg-neutral-800" />
-              <div>
-                <AnimatedCounter target={95} suffix="%" className="text-3xl font-extrabold text-green-700 dark:text-green-500" />
-                <div className="text-neutral-500 text-xs mt-1">{t.hero.stats.compression}</div>
-              </div>
-            </motion.div>
-          </div>
-
+      {/* ── Flash orb ── */}
+      <AnimatePresence>
+        {phase === "flash" && (
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="hidden lg:block space-y-4"
-          >
-            <TypingTerminal title="~ — zsh" lines={terminalLines} />
-            <CompressionTicker />
-          </motion.div>
+            key="flash"
+            className="absolute pointer-events-none rounded-full"
+            style={{
+              width: 160, height: 160,
+              background:
+                "radial-gradient(circle, #fff 0%, #22c55e 35%, rgba(34,197,94,0.2) 65%, transparent 80%)",
+            }}
+            initial={{ scale: 0, opacity: 1 }}
+            animate={{ scale: 7,  opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.2, 0, 0.5, 1] }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── SQUEEZR ── */}
+      {(phase === "reveal" || phase === "done") && (
+        <div className="flex items-baseline select-none" style={{ gap: "0.01em" }}>
+          {LETTERS.map((letter, i) => (
+            <motion.span
+              key={i}
+              className="font-black text-white"
+              style={{
+                fontSize: "clamp(3.5rem, 13vw, 11rem)",
+                lineHeight: 1,
+                letterSpacing: "-0.035em",
+                textShadow: "0 0 80px rgba(34,197,94,0.25), 0 0 160px rgba(34,197,94,0.1)",
+              }}
+              initial={{ opacity: 0, y: 70, scale: 0.35 }}
+              animate={{ opacity: 1, y: 0,  scale: 1 }}
+              transition={{
+                delay: i * 0.055,
+                type: "spring",
+                stiffness: 380,
+                damping: 22,
+              }}
+            >
+              {letter}
+            </motion.span>
+          ))}
         </div>
-      </div>
+      )}
+
+      {/* ── Tagline ── */}
+      <AnimatePresence>
+        {phase === "done" && (
+          <motion.p
+            key="tagline"
+            className="font-mono text-neutral-500 tracking-[0.35em] uppercase text-xs mt-5"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.7 }}
+          >
+            compress · save · ship faster
+          </motion.p>
+        )}
+      </AnimatePresence>
+
+      {/* ── CTA buttons ── */}
+      <AnimatePresence>
+        {phase === "done" && (
+          <motion.div
+            key="cta"
+            className="flex gap-3 mt-10"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+          >
+            <a
+              href="/docs"
+              className="px-6 py-3 bg-white text-black font-bold text-sm rounded-xl hover:bg-neutral-100 transition-colors"
+            >
+              Get started
+            </a>
+            <a
+              href="https://github.com/sergioramosv/Squeezr"
+              target="_blank"
+              rel="noopener"
+              className="px-6 py-3 border border-neutral-700 text-neutral-300 font-bold text-sm rounded-xl hover:border-neutral-500 hover:text-white transition-colors flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+              </svg>
+              GitHub
+            </a>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Scroll indicator ── */}
+      <AnimatePresence>
+        {phase === "done" && (
+          <motion.div
+            key="scroll"
+            className="absolute bottom-8 flex flex-col items-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.3 }}
+          >
+            <motion.div
+              animate={{ y: [0, 7, 0] }}
+              transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
+              className="w-px h-10 bg-gradient-to-b from-neutral-600 to-transparent"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
