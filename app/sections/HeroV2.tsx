@@ -27,34 +27,6 @@ export function HeroSection() {
   return (
     <section className="relative w-full h-screen -mt-16 bg-black overflow-hidden flex flex-col items-center justify-center">
 
-      {/* ── Press bar — TOP ── */}
-      <AnimatePresence>
-        {(phase === "big" || isCompressing) && (
-          <motion.div
-            key="bar-top"
-            className="absolute left-0 right-0 pointer-events-none"
-            style={{ height: 2, background: "rgba(255,255,255,0.55)" }}
-            initial={{ top: "calc(50% - 28vh)" }}
-            animate={{ top: isCompressing ? "calc(50% - 5.5vh)" : "calc(50% - 28vh)" }}
-            transition={{ duration: PRESS_DURATION, ease: PRESS_EASE }}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* ── Press bar — BOTTOM ── */}
-      <AnimatePresence>
-        {(phase === "big" || isCompressing) && (
-          <motion.div
-            key="bar-bottom"
-            className="absolute left-0 right-0 pointer-events-none"
-            style={{ height: 2, background: "rgba(255,255,255,0.55)" }}
-            initial={{ top: "calc(50% + 28vh)" }}
-            animate={{ top: isCompressing ? "calc(50% + 5.5vh)" : "calc(50% + 28vh)" }}
-            transition={{ duration: PRESS_DURATION, ease: PRESS_EASE }}
-          />
-        )}
-      </AnimatePresence>
-
       {/* ── SQUEEZR ── */}
       <AnimatePresence>
         {(phase === "big" || isCompressing || phase === "done") && (
