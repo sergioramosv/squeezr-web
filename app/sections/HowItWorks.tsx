@@ -9,8 +9,8 @@ import { useI18n } from "@/lib/i18n";
 const stepKeys = ["install", "proxy", "savings"] as const;
 const stepTerminals = [
   { title: "terminal", lines: [{ prompt: "$", command: "npm i -g squeezr-ai" }, { prompt: "$", command: "squeezr setup" }, { output: "✓ Done" }] },
-  { title: "proxy", lines: [{ output: "→ POST /v1/messages" }, { output: "  12,847 tokens input" }, { output: "  Compressing..." }] },
-  { title: "stats", lines: [{ output: "✓ 42 requests processed" }, { output: "✓ 34,291 tokens saved" }, { output: "✓ 78% average compression" }] },
+  { title: "proxy",    lines: [{ output: "→ POST /v1/messages" }, { output: "  12,847 tokens input" }, { output: "  Compressing..." }] },
+  { title: "stats",    lines: [{ output: "✓ 42 requests processed" }, { output: "✓ 34,291 tokens saved" }, { output: "✓ 78% average compression" }] },
 ];
 
 function StepCard({ step, terminal, index, total }: {
@@ -21,23 +21,37 @@ function StepCard({ step, terminal, index, total }: {
 
   return (
     <motion.div ref={ref} className="relative flex gap-6"
-      initial={{ opacity: 0, y: 40 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: index * 0.15 }}>
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5, delay: index * 0.15 }}
+    >
       <div className="hidden md:flex flex-col items-center shrink-0">
-        <motion.div className="w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold text-white bg-neutral-900 dark:bg-white dark:text-neutral-900"
-          initial={{ scale: 0 }} animate={isInView ? { scale: 1 } : {}} transition={{ duration: 0.3, delay: index * 0.15 + 0.2, type: "spring" }}>
+        <motion.div
+          className="w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold font-mono text-green-400 border border-green-700/30 bg-green-900/15"
+          initial={{ scale: 0 }}
+          animate={isInView ? { scale: 1 } : {}}
+          transition={{ duration: 0.3, delay: index * 0.15 + 0.2, type: "spring" }}
+        >
           {String(index + 1).padStart(2, "0")}
         </motion.div>
         {index < total - 1 && (
-          <motion.div className="w-0.5 flex-1 mt-2 bg-neutral-200 dark:bg-neutral-800" style={{ transformOrigin: "top" }}
-            initial={{ scaleY: 0 }} animate={isInView ? { scaleY: 1 } : {}} transition={{ duration: 0.5, delay: index * 0.15 + 0.4 }} />
+          <motion.div
+            className="w-px flex-1 mt-2"
+            style={{ background: "linear-gradient(to bottom, rgba(34,197,94,0.2), rgba(34,197,94,0.03))", transformOrigin: "top" }}
+            initial={{ scaleY: 0 }}
+            animate={isInView ? { scaleY: 1 } : {}}
+            transition={{ duration: 0.5, delay: index * 0.15 + 0.4 }}
+          />
         )}
       </div>
       <div className="flex-1 pb-12">
         <div className="md:hidden mb-3">
-          <span className="inline-flex w-8 h-8 rounded-lg bg-neutral-900 dark:bg-white items-center justify-center text-xs font-bold text-white dark:text-neutral-900">{String(index + 1).padStart(2, "0")}</span>
+          <span className="inline-flex w-8 h-8 rounded-lg border border-green-700/30 bg-green-900/15 items-center justify-center text-xs font-bold font-mono text-green-400">
+            {String(index + 1).padStart(2, "0")}
+          </span>
         </div>
-        <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">{step.title}</h3>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed mb-4 max-w-md">{step.desc}</p>
+        <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+        <p className="text-sm text-white/40 leading-relaxed mb-4 max-w-md">{step.desc}</p>
         <div className="max-w-sm">
           <Terminal title={terminal.title}>{terminal.lines.map((l, i) => <TerminalLine key={i} {...l} />)}</Terminal>
         </div>
@@ -51,13 +65,13 @@ export function HowItWorks() {
   const steps = stepKeys.map((k) => t.howItWorks.steps[k]);
 
   return (
-    <section className="px-6 py-24 md:py-32 bg-white dark:bg-[#0a0a0a]">
+    <section className="px-6 py-24 md:py-32 bg-[#050505] border-t border-white/[0.04]">
       <div className="max-w-3xl mx-auto">
         <ScrollReveal>
           <div className="text-center mb-16">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-green-700 dark:text-green-500 mb-3 block">{t.howItWorks.label}</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">{t.howItWorks.title}</h2>
-            <p className="text-neutral-500 dark:text-neutral-400 max-w-lg mx-auto">{t.howItWorks.desc}</p>
+            <span className="text-xs font-mono uppercase tracking-[0.2em] text-green-400 mb-3 block">{t.howItWorks.label}</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t.howItWorks.title}</h2>
+            <p className="text-white/40 max-w-lg mx-auto">{t.howItWorks.desc}</p>
           </div>
         </ScrollReveal>
         <div>{steps.map((step, i) => <StepCard key={i} step={step} terminal={stepTerminals[i]} index={i} total={steps.length} />)}</div>
