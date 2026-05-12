@@ -138,13 +138,12 @@ export function HeroSection() {
         {phase === "done" && (
           <motion.p
             key="tagline"
-            className="relative z-10 text-white/70 text-base mt-6 font-medium"
-            style={{ letterSpacing: "0.01em" }}
+            className="relative z-10 font-mono text-white/50 tracking-[0.3em] uppercase text-xs mt-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 1.1, ease: "easeOut" }}
           >
-            Save up to <span className="text-green-400 font-bold">91% of tokens</span> — zero workflow changes.
+            compress · save · ship faster
           </motion.p>
         )}
       </AnimatePresence>
