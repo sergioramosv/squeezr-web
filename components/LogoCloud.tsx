@@ -3,7 +3,7 @@
 import { useI18n } from "@/lib/i18n";
 import { motion } from "framer-motion";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "./ScrollReveal";
-import { FiTerminal, FiCode, FiZap, FiBox, FiLayers, FiMonitor, FiCloud, FiGrid } from "react-icons/fi";
+import { FiTerminal, FiCode, FiZap, FiBox, FiLayers, FiMonitor, FiGrid } from "react-icons/fi";
 import { SiOpenai } from "react-icons/si";
 import { ReactNode } from "react";
 
@@ -48,18 +48,13 @@ export function LogoCloud() {
           {tools.map((tool) => (
             <StaggerItem key={tool.name}>
               <motion.div
-                whileHover={tool.soon ? {} : { y: -4 }}
+                whileHover={tool.soon ? {} : { y: -4, boxShadow: "0 8px 30px rgba(34,197,94,0.06)" }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
                 className={`relative flex flex-col items-center text-center px-4 py-5 rounded-2xl border transition-all duration-300 ${
                   tool.soon
                     ? "border-dashed border-white/[0.06] bg-white/[0.01]"
                     : "border-white/[0.06] bg-white/[0.02] hover:border-green-700/40 hover:bg-white/[0.04]"
                 }`}
-                style={tool.soon ? {} : { boxShadow: "0 0 0 0 rgba(34,197,94,0)" }}
-                whileHover={tool.soon ? {} : {
-                  y: -4,
-                  boxShadow: "0 8px 30px rgba(34,197,94,0.06)",
-                }}
               >
                 {tool.soon && (
                   <span className="absolute top-2 right-2 text-[9px] font-bold uppercase tracking-wider text-green-600 bg-green-900/20 px-1.5 py-0.5 rounded">
