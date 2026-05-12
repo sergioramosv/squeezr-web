@@ -1,95 +1,46 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FiMonitor, FiArrowRight, FiZap } from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
 import Link from "next/link";
 
 export function CursorAnnouncement() {
   return (
-    <section className="relative px-6 py-16 md:py-20 bg-[#050505] border-t border-white/[0.04] overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+      className="relative border-t border-b border-green-900/30 bg-green-950/20 backdrop-blur-sm overflow-hidden"
+    >
+      {/* Subtle left glow */}
+      <div className="absolute left-0 top-0 bottom-0 w-32 pointer-events-none"
+        style={{ background: "linear-gradient(to right, rgba(34,197,94,0.06), transparent)" }} />
 
-      {/* Faint green glow top-center */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at top, rgba(34,197,94,0.12) 0%, transparent 70%)" }} />
+      <div className="max-w-6xl mx-auto px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
 
-      <div className="relative z-10 max-w-4xl mx-auto">
-
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="flex justify-center mb-8"
-        >
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-green-500/10 border border-green-500/25 text-green-400">
-            <FiZap className="w-3 h-3" />
-            Novedad
+        <div className="flex items-center gap-3 flex-wrap justify-center sm:justify-start">
+          {/* Badge */}
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-green-500/15 border border-green-500/30 text-green-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            Nuevo
           </span>
-        </motion.div>
 
-        {/* Main card */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55, delay: 0.1 }}
-          className="relative rounded-3xl border border-green-700/25 bg-green-950/10 p-8 md:p-12 text-center overflow-hidden"
+          {/* Text */}
+          <span className="text-sm text-white/80 font-medium">
+            <span className="text-white font-semibold">Cursor IDE</span>
+            {" "}ya disponible — compresión automática vía proxy MITM
+          </span>
+        </div>
+
+        {/* CTA */}
+        <Link
+          href="/docs/cursor"
+          className="flex items-center gap-1.5 text-sm text-green-400 font-semibold hover:text-green-300 transition-colors shrink-0 group"
         >
-          {/* Subtle beam inside the card */}
-          <div className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(34,197,94,0.06) 0%, transparent 70%)" }} />
-
-          <div className="relative z-10">
-            {/* Icon */}
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-green-900/25 border border-green-700/30 text-green-400 mb-6">
-              <FiMonitor className="w-8 h-8" />
-            </div>
-
-            {/* Heading */}
-            <h2 className="text-3xl md:text-4xl font-black text-white mb-3">
-              Cursor IDE — ya disponible
-            </h2>
-            <p className="text-white/45 text-base max-w-xl mx-auto mb-8 leading-relaxed">
-              Squeezr ahora comprime el contexto de Cursor IDE automáticamente vía proxy MITM.
-              Sin configuración extra — instala, activa y empieza a ahorrar tokens al instante.
-            </p>
-
-            {/* Stats row */}
-            <div className="flex flex-wrap justify-center gap-6 mb-10">
-              {[
-                { label: "Compresión media", value: "84%" },
-                { label: "Setup", value: "< 2 min" },
-                { label: "Config extra", value: "Cero" },
-              ].map((s) => (
-                <div key={s.label} className="text-center">
-                  <div className="text-2xl font-black text-green-400">{s.value}</div>
-                  <div className="text-xs text-white/30 mt-0.5 font-mono uppercase tracking-wider">{s.label}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* CTAs */}
-            <div className="flex flex-wrap justify-center gap-3">
-              <Link
-                href="/docs/cursor"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-bold text-sm rounded-xl hover:bg-neutral-100 transition-colors"
-              >
-                Ver documentación
-                <FiArrowRight className="w-4 h-4" />
-              </Link>
-              <a
-                href="https://github.com/sergioramosv/Squeezr"
-                target="_blank"
-                rel="noopener"
-                className="inline-flex items-center gap-2 px-6 py-3 border border-white/15 text-white/70 font-semibold text-sm rounded-xl hover:border-white/30 hover:text-white transition-colors"
-              >
-                GitHub
-              </a>
-            </div>
-          </div>
-        </motion.div>
+          Ver documentación
+          <FiArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+        </Link>
       </div>
-    </section>
+    </motion.div>
   );
 }
