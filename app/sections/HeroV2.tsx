@@ -3,16 +3,24 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-type Phase = "idle" | "flash" | "reveal" | "done";
+type Phase = "idle" | "compress" | "done";
+
+const LETTERS = ["S", "Q", "U", "E", "E", "Z", "R"];
+const CENTER  = (LETTERS.length - 1) / 2; // 3
+
+// How far each letter starts from its final position (px)
+// Outermost letters travel the most — innermost barely move
+function spreadX(i: number) {
+  return (i - CENTER) * 320;
+}
 
 export function HeroSection() {
   const [phase, setPhase] = useState<Phase>("idle");
 
   useEffect(() => {
     const t = [
-      setTimeout(() => setPhase("flash"),  350),
-      setTimeout(() => setPhase("reveal"), 520),
-      setTimeout(() => setPhase("done"),   2400),
+      setTimeout(() => setPhase("compress"), 300),
+      setTimeout(() => setPhase("done"),     1800),
     ];
     return () => t.forEach(clearTimeout);
   }, []);
@@ -20,51 +28,33 @@ export function HeroSection() {
   return (
     <section className="relative w-full h-screen -mt-16 bg-black overflow-hidden flex flex-col items-center justify-center">
 
-      {/* ── Flash — white hit before the squeeze ── */}
-      <AnimatePresence>
-        {phase === "flash" && (
-          <motion.div
-            key="flash"
-            className="absolute inset-0 bg-white z-10 pointer-events-none"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 1, 0] }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* ── SQUEEZR — springs from squished ── */}
-      <AnimatePresence>
-        {(phase === "reveal" || phase === "done") && (
-          <motion.div
-            key="squeezr"
-            className="flex items-baseline select-none"
-            style={{ gap: "0.01em" }}
-            initial={{ scaleX: 8, scaleY: 0.08 }}
-            animate={{ scaleX: 1, scaleY: 1 }}
+      {/* ── SQUEEZR — letters compress inward ── */}
+      <div className="flex items-baseline select-none" style={{ gap: "0.01em" }}>
+        {LETTERS.map((letter, i) => (
+          <motion.span
+            key={i}
+            className="font-black text-white"
+            style={{
+              fontSize:      "clamp(3.5rem, 13vw, 11rem)",
+              lineHeight:    1,
+              letterSpacing: "-0.035em",
+            }}
+            initial={{ x: spreadX(i), opacity: 0 }}
+            animate={
+              phase === "idle"
+                ? { x: spreadX(i), opacity: 0 }
+                : { x: 0, opacity: 1 }
+            }
             transition={{
-              type: "spring",
-              stiffness: 160,
-              damping: 14,
-              mass: 1,
+              duration: 0.65,
+              ease: [0.32, 0, 0.1, 1], // slow start → sharp deceleration = pressure feel
+              opacity: { duration: 0.15 },
             }}
           >
-            {"SQUEEZR".split("").map((letter, i) => (
-              <span
-                key={i}
-                className="font-black text-white"
-                style={{
-                  fontSize:      "clamp(3.5rem, 13vw, 11rem)",
-                  lineHeight:    1,
-                  letterSpacing: "-0.035em",
-                }}
-              >
-                {letter}
-              </span>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {letter}
+          </motion.span>
+        ))}
+      </div>
 
       {/* ── Tagline ── */}
       <AnimatePresence>
