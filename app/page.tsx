@@ -1,4 +1,4 @@
-import { HeroSection } from "./sections/Hero";
+import { HeroSection } from "./sections/HeroV2";
 import { LogoCloud } from "@/components/LogoCloud";
 import { CompressionVisualizer } from "@/components/CompressionVisualizer";
 import { PipelineFlow } from "@/components/PipelineFlow";
